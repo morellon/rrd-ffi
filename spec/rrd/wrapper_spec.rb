@@ -25,6 +25,12 @@ describe RRD::Wrapper do
       RRD::Wrapper.update(RRD_FILE, "N:500000000:U:U:U:U:U:U:U:U").should be_true
     end
     
+    it "should fetch values" do
+      values = RRD::Wrapper.fetch(RRD_FILE, "AVERAGE")
+      values.should have(25).lines
+      values[0][1].should == 0.0008
+    end
+    
     it "should return the first entered date" do
       RRD::Wrapper.first(RRD_FILE).should == 1266944780
     end

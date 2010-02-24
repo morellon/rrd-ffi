@@ -27,17 +27,41 @@ module RRD
       end
 
       def fetch(*args)
-        raise "not implemented"
-        values = FFI::MemoryPointer.new(:pointer, 0)
+        #FIXME: Refactor this
+        start_time_ptr = empty_pointer
+        end_time_ptr = empty_pointer
+        step_ptr = empty_pointer
+        ds_count_ptr = empty_pointer
+        ds_names_ptr = empty_pointer
+        
+        values = FFI::MemoryPointer.new(:pointer)
         argv = to_pointer(["fetch"] + args)
-        raise rrd_get_error unless rrd_fetch(args.size+1, argv, empty_pointer, empty_pointer, empty_pointer, empty_pointer, empty_pointer, values) == 0
-        values
+        raise rrd_get_error unless rrd_fetch(args.size+1, argv, start_time_ptr, end_time_ptr, step_ptr, ds_count_ptr, ds_names_ptr, values) == 0
+        
+        ds_count = ds_count_ptr.get_int(0)
+        start_time = start_time_ptr.get_int(0)
+        end_time = end_time_ptr.get_int(0)
+        step = step_ptr.get_int(0)
+        
+        result_lines = (end_time-start_time)/step
+        result = []
+        (0..result_lines-1).each do |i|
+          data = []
+          data << start_time + i*step
+          (0..ds_count-1).each do |j|
+            data << values.get_pointer(0)[8*(ds_count*i+j)].get_double(0)
+          end
+          result << data
+        end
+        
+        result
       end
       
       def info(*args)
         raise "not implemented"
         argv = to_pointer(["info"] + args)
         info = rrd_info(args.size+1, argv)
+        raise rrd_get_error if info == -1
       end
       
       def first(*args)
@@ -68,7 +92,7 @@ module RRD
       
       private
       def empty_pointer
-        FFI::MemoryPointer.new(:pointer, 0)
+        FFI::MemoryPointer.new(:pointer)
       end
 
       def to_pointer(array_of_strings)

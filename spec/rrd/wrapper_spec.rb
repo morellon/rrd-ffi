@@ -34,6 +34,7 @@ describe RRD::Wrapper do
     
     it "should return info data about this file" do
       info = RRD::Wrapper.info(RRD_FILE)
+      info["filename"].should == RRD_FILE
     end
     
     it "should return the first entered date" do

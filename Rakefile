@@ -15,6 +15,8 @@ Jeweler::Tasks.new do |gem|
   gem.add_dependency "ffi"
 end
 
+Jeweler::GemcutterTasks.new
+
 desc 'Run the specs'
 Spec::Rake::SpecTask.new(:spec) do |t|
   t.spec_opts = ['--colour --format specdoc --loadby mtime --reverse']

@@ -18,7 +18,11 @@ Then, run <tt>sudo gem install rrd-ffi</tt>
 
 If you are using Mac Ports you will have problems, so add the following to your .profile/.bashrc/.bash_profile file:
 
-<tt>export RRD_LIB=/opt/local/lib/librrd.dylib</tt>
+  export RRD_LIB=/opt/local/lib/librrd.dylib
+
+or
+
+  export LD_LIBRARY_PATH=/opt/local/lib
 
 If you are not using MAC OS and still have problems, export the RRD_PATH variable with the path to your librrd file.
 

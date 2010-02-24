@@ -1,12 +1,45 @@
 module RRD
   class Wrapper
+    
+    class RRDBlob < FFI::Struct
+      layout :size,  :ulong,
+             :ptr, :pointer
+    end
+    
+    class RRDInfoVal < FFI::Union
+      layout :u_cnt,  :ulong,
+             :u_val, :double,
+             :u_str, :string,
+             :u_int,  :int,
+             :u_blob, RRDBlob
+    end
+    
+    class RRDInfo < FFI::Struct
+      layout :key,  :string,
+             :type, :uint,
+             :value, RRDInfoVal,
+             :next,  :pointer
+    end
+    
     class << self
       extend FFI::Library
+      
+      INFO_TYPE = { 0 => :u_val, 1 => :u_cnt, 2 => :u_str, 3 => :u_int, 4 => :u_blob}
+      
+      def rrd_lib
+        if defined?(RRD_LIB)
+          RRD_LIB
+        elsif ENV["RRD_LIB"]
+          ENV["RRD_LIB"] 
+        else
+          "rrd"
+        end
+      end
 
-      ffi_lib "/opt/local/lib/librrd.dylib"
+      ffi_lib ENV["RRD_LIB"] || "/opt/local/lib/librrd.dylib"
       attach_function :rrd_create, [:int, :pointer], :int
       attach_function :rrd_update, [:int, :pointer], :int
-      attach_function :rrd_info, [:int, :pointer], :int
+      attach_function :rrd_info, [:int, :pointer], :pointer
       attach_function :rrd_fetch, [:int, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer], :int
       attach_function :rrd_first, [:int, :pointer], :time_t
       attach_function :rrd_last, [:int, :pointer], :time_t
@@ -58,10 +91,17 @@ module RRD
       end
       
       def info(*args)
-        raise "not implemented"
         argv = to_pointer(["info"] + args)
-        info = rrd_info(args.size+1, argv)
-        raise rrd_get_error if info == -1
+        result = rrd_info(args.size+1, argv)
+    
+        info = {}
+        while result.address != 0
+          item = RRD::Wrapper::RRDInfo.new result
+          info[item[:key]] = item[:value][INFO_TYPE[item[:type]].to_sym]
+          result = item[:next]
+        end 
+        
+        info
       end
       
       def first(*args)

@@ -26,9 +26,14 @@ describe RRD::Wrapper do
     end
     
     it "should fetch values" do
-      values = RRD::Wrapper.fetch(RRD_FILE, "AVERAGE")
+      values = RRD::Wrapper.fetch(RRD_FILE, "AVERAGE", "--start", "1266933600", "--end", "1267020000")
       values.should have(25).lines
+      values[0][0].should == 1266933600
       values[0][1].should == 0.0008
+    end
+    
+    it "should return info data about this file" do
+      info = RRD::Wrapper.info(RRD_FILE)
     end
     
     it "should return the first entered date" do

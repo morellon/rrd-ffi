@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["morellon", "fnando", "rafaelrosafu", "dalcico"]
   s.date = %q{2010-02-24}
-  s.description = %q{Provides bindings for many RRD functions (using librrd), as well as some DSL for graphic building}
+  s.description = %q{Provides bindings for many RRD functions (using ffi gem and librrd), as well as some DSL for graphic building}
   s.email = %q{morellon@gmail.com}
   s.extra_rdoc_files = [
     "README.rdoc"

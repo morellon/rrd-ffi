@@ -12,8 +12,13 @@ Gem::Specification.new do |s|
   s.date = %q{2010-02-24}
   s.description = %q{Provides bindings for many RRD functions (using librrd), as well as some DSL for graphic building}
   s.email = %q{morellon@gmail.com}
+  s.extra_rdoc_files = [
+    "README.rdoc"
+  ]
   s.files = [
     ".gitignore",
+     "CHANGELOG.rdoc",
+     "README.rdoc",
      "Rakefile",
      "lib/rrd.rb",
      "lib/rrd/base.rb",
@@ -28,7 +33,7 @@ Gem::Specification.new do |s|
      "spec/spec_helper.rb",
      "spec/vm.xml"
   ]
-  s.homepage = %q{http://github.com/morellon/r2d2}
+  s.homepage = %q{http://github.com/morellon/rrd-ffi}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.5}

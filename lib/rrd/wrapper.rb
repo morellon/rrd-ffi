@@ -1,5 +1,5 @@
 module RRD
-  class Wrapper
+  class Wrapper #:nodoc: all
     
     class RRDBlob < FFI::Struct
       layout :size,  :ulong,

@@ -1,5 +1,5 @@
 require "rake"
-require "rake/rdoctask"
+require "hanna/rdoctask"
 require "spec/rake/spectask"
 require "lib/rrd/version"
 require 'jeweler'

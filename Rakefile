@@ -12,6 +12,7 @@ Jeweler::Tasks.new do |gem|
   gem.homepage = "http://github.com/morellon/rrd-ffi"
   gem.authors = ["morellon", "fnando", "rafaelrosafu", "dalcico"]
   gem.add_development_dependency "rspec"
+  gem.add_dependency "ffi"
 end
 
 desc 'Run the specs'

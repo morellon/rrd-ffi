@@ -16,11 +16,15 @@ To install rrd-ffi, you will need to have librrd in your system.
 
 Then, run <tt>sudo gem install rrd-ffi</tt>
 
-If you have any problem after this, export the RRD_PATH variable with the path to your librrd file.
+If you are using Mac Ports you will have problems, so add the following to your .profile/.bashrc/.bash_profile file:
+
+<tt>export RRD_LIB=/opt/local/lib/librrd.dylib</tt>
+
+If you are not using MAC OS and still have problems, export the RRD_PATH variable with the path to your librrd file.
 
 == Example Usage
-
-  rrd = RRD::Base("myrrd.rrd")
+  require "rrd"
+  rrd = RRD::Base.new("myrrd.rrd")
   # Restoring a rrd file from xml
   rrd.restore("myrrd.xml")
   

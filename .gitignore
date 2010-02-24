@@ -1,3 +1,4 @@
 *.rrd
 *.png
 pkg
+doc

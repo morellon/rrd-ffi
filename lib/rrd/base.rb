@@ -7,12 +7,12 @@ module RRD
     end
   
     def starts_at
-      Wrapper.first(rrd_file)
+      Time.at Wrapper.first(rrd_file)
     end
     alias :first :starts_at
   
     def ends_at
-      Wrapper.last(rrd_file)
+      Time.at Wrapper.last(rrd_file)
     end
     alias :last :ends_at
   

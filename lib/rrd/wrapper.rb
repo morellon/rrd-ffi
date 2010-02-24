@@ -1,5 +1,8 @@
 module RRD
-  class Wrapper #:nodoc: all
+  # Raw RRD Tool wrapper.
+  #
+  # See http://oss.oetiker.ch/rrdtool/doc/rrdtool.en.html for details on the parameters
+  class Wrapper
     
     class RRDBlob < FFI::Struct
       layout :size,  :ulong,
@@ -47,18 +50,23 @@ module RRD
       attach_function :rrd_graph, [:int, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer], :int
       attach_function :rrd_get_error, [], :string
       
+      # Set up a new Round Robin Database (RRD).
       def create(*args)
         argv = to_pointer(["create"] + args)
         raise rrd_get_error unless rrd_create(args.size+1, argv) == 0
         true
       end
 
+      # Store new data values into an RRD.
       def update(*args)
         argv = to_pointer(["update"] + args)
         raise rrd_get_error unless rrd_update(args.size+1, argv) == 0
         true
       end
 
+      # Get data for a certain time period from a RRD.
+      # 
+      # Returns an array of arrays (which contains the date and values for all datasources)
       def fetch(*args)
         #FIXME: Refactor this
         start_time_ptr = empty_pointer
@@ -90,6 +98,9 @@ module RRD
         result
       end
       
+      # Get information about an RRD.
+      # 
+      # Returns a hash with the information
       def info(*args)
         argv = to_pointer(["info"] + args)
         result = rrd_info(args.size+1, argv)
@@ -104,6 +115,9 @@ module RRD
         info
       end
       
+      # Find the first update time of an RRD.
+      #  
+      # Returns an integer unix time
       def first(*args)
         argv = to_pointer(["first"] + args)
         date = rrd_first(args.size+1, argv)
@@ -111,6 +125,9 @@ module RRD
         date
       end
       
+      # Find the last update time of an RRD.
+      #
+      # Returns an integer unix time
       def last(*args)
         argv = to_pointer(["last"] + args)
         date = rrd_last(args.size+1, argv)
@@ -118,12 +135,14 @@ module RRD
         date
       end
       
+      # Restore an RRD in XML format to a binary RRD.
       def restore(*args)
         argv = to_pointer(["restore"] + args)
         raise rrd_get_error unless rrd_restore(args.size+1, argv) == 0
         true
       end
       
+      # Create a graph from data stored in one or several RRDs.
       def graph(*args)
         argv = to_pointer(["graph"] + args)
         raise rrd_get_error unless rrd_graph(args.size+1, argv, *Array.new(6, empty_pointer)) == 0

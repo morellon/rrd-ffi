@@ -17,3 +17,30 @@ To install rrd-ffi, you will need to have librrd in your system.
 Then, run <tt>sudo gem install rrd-ffi</tt>
 
 If you have any problem after this, export the RRD_PATH variable with the path to your librrd file.
+
+== Example Usage
+
+  rrd = RRD::Base("myrrd.rrd")
+  # Restoring a rrd file from xml
+  rrd.restore("myrrd.xml")
+  
+  # Looking for the first and last entered dates 
+  puts rrd.starts_at
+  puts rrd.ends_at
+  
+  # Generating a graph with memory and cpu usage from myrrd.rrd file
+  RRD.graph "graph.png", :title => "Test", :width => 800, :height => 250 do
+    area "myrrd.rrd", :cpu0 => :average, :color => "#00FF00", :label => "CPU 0"
+    line "myrrd.rrd", :memory => :average, :color => "#0000FF", :label => "Memory"
+  end
+
+== Raw API Usage
+
+  # Creating a rrd file
+  RRD::Wrapper.create "myrrd.rrd", "--step", "300", "DS:ifOutOctets:COUNTER:1800:0:4294967295", "RRA:AVERAGE:0.5:1:2016"
+  
+  # Updating rrd with a new value
+  RRD::Wrapper.update "myrrd.rrd", "N:500000000"
+
+  # Creating a graph
+  RRD::Wrapper.graph("graph.png", "DEF:data=myrrd.rrd:ifOutOctets:AVERAGE", "LINE1:data#0000FF:Output bytes")

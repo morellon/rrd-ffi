@@ -11,10 +11,14 @@ describe RRD::Base do
     @rrd.restore(XML_FILE).should be_true
   end
   
-  it "should return the date started at" do
-    date = 100000
-    RRD::Wrapper.should_receive(:first).with(RRD_FILE).and_return(date)
-    @rrd.starts_at.should == date
+  it "should return the starting date" do
+    RRD::Wrapper.should_receive(:first).with(RRD_FILE).and_return(Time.now.to_i)
+    @rrd.starts_at.should be_a(Time)
+  end
+  
+  it "should return the ending date" do
+    RRD::Wrapper.should_receive(:last).with(RRD_FILE).and_return(Time.now.to_i)
+    @rrd.ends_at.should be_a(Time)
   end
   
   it "should respond to first"

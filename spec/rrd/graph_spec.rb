@@ -7,12 +7,12 @@ describe RRD::Graph do
     @graph = RRD::Graph.new IMG_FILE
   end
   
-  xit "should create a graph correctly" do
+  it "should create a graph correctly" do
     @graph.line RRD_FILE, :memory => :average, :color => "#0000FF", :label => "Memory Avg"
-    #@graph.should_receive(:rrd_graph).with("").and_return 0
+    RRD::Wrapper.should_receive(:graph).with(IMG_FILE,
+                                            "DEF:d0=#{RRD_FILE}:memory:AVERAGE",
+                                            "LINE1:d0#0000FF:Memory Avg").and_return true
     @graph.save
-    
-    File.should be_file(IMG_FILE)
   end
   
 end

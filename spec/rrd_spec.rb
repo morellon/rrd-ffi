@@ -13,5 +13,6 @@ describe RRD do
     end
     
     result.should be_true
+    File.should be_file(IMG_FILE)
   end
 end

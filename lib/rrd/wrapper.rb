@@ -26,7 +26,7 @@ module RRD
       
       INFO_TYPE = { 0 => :u_val, 1 => :u_cnt, 2 => :u_str, 3 => :u_int, 4 => :u_blob}
       
-      def rrd_lib
+      def self.rrd_lib
         if defined?(RRD_LIB)
           RRD_LIB
         elsif ENV["RRD_LIB"]
@@ -36,7 +36,7 @@ module RRD
         end
       end
 
-      ffi_lib ENV["RRD_LIB"] || "/opt/local/lib/librrd.dylib"
+      ffi_lib rrd_lib
       attach_function :rrd_create, [:int, :pointer], :int
       attach_function :rrd_update, [:int, :pointer], :int
       attach_function :rrd_info, [:int, :pointer], :pointer
@@ -99,7 +99,7 @@ module RRD
           item = RRD::Wrapper::RRDInfo.new result
           info[item[:key]] = item[:value][INFO_TYPE[item[:type]].to_sym]
           result = item[:next]
-        end 
+        end
         
         info
       end

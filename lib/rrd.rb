@@ -1,4 +1,5 @@
 require "ffi"
+require "rrd/version"
 require "rrd/wrapper"
 require "rrd/base"
 require "rrd/graph"

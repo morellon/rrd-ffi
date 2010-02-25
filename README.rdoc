@@ -31,6 +31,15 @@ If you are not using MAC OS and still have problems, export the RRD_PATH variabl
   rrd = RRD::Base.new("myrrd.rrd")
   # Restoring a rrd file from xml
   rrd.restore("myrrd.xml")
+
+  # Fetching data from rrd
+  rrd.fetch.each {|line| puts line.inspect}
+
+  # Collecting information from rrd
+  puts rrd.info.to_yaml
+
+  # Updating rrd (this rrd example has 3 datasources)
+  rrd.update Time.now, 500, nil, 30
   
   # Looking for the first and last entered dates 
   puts rrd.starts_at

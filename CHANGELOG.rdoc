@@ -3,6 +3,8 @@
 == 2010-02-25
 
 * Fixed error message to be cleared before every call to wrapper. It was causing problems when doing a valid call after an invalid one
+* Added advanced DSL for graphic building
+* Added DSL for creating RRD file
 
 == 2010-02-24
 

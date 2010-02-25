@@ -17,9 +17,9 @@ describe RRD do
   end
   
   xit "should create a graph using advanced DSL" do
-    result = RRD.graph IMG_FILE, :title => "Test", :width => 800, :height => 250, :start => "-1d", :end => "n" do
+    result = RRD.graph IMG_FILE, :title => "Test", :width => 800, :height => 250, :start => Time.now - 1.day, :end => Time.now do
       for_rrd_data "cpu0", :cpu0 => :average, :from => RRD_FILE
-      for_rrd_data "mem", :memory => :average, :from => RRD_FILE, :start => "-1d", :end => "n", :shift => 3600
+      for_rrd_data "mem", :memory => :average, :from => RRD_FILE, :start => Time.now - 1.day, :end => Time.now, :shift => 1.hour
       using_calculated_data "half_mem", :calc => "mem,2,/"
       using_value "mem_avg", :calc => "mem,AVERAGE"
       draw_line :data => "mem", :color => "#0000FF", :label => "Memory", :width => 1

@@ -3,6 +3,12 @@ require "spec/rake/spectask"
 require "lib/rrd/version"
 
 begin
+  require "hanna/rdoctask"
+rescue LoadError => e
+  require "rake/rdoctask"
+end
+
+begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "rrd-ffi"
@@ -14,7 +20,6 @@ begin
     gem.authors = ["morellon", "fnando", "rafaelrosafu", "dalcico"]
     gem.add_development_dependency "rspec"
     gem.add_dependency "ffi"
-    gem.add_dependency "hanna"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
@@ -27,18 +32,13 @@ Spec::Rake::SpecTask.new(:spec) do |t|
   t.spec_files = FileList['spec/**/*_spec.rb']
 end
 
-begin
-  require "hanna/rdoctask"
-  Rake::RDocTask.new do |rdoc|
-    rdoc.main = "README.rdoc"
-    rdoc.rdoc_dir = "doc"
-    rdoc.title = "RRD"
-    rdoc.options += %w[ --line-numbers --inline-source --charset utf-8 ]
-    rdoc.rdoc_files.include("README.rdoc", "CHANGELOG.rdoc")
-    rdoc.rdoc_files.include("lib/**/*.rb")
-  end
-rescue LoadError
-  puts "Hanna not available. Install it with: gem install hanna"
+Rake::RDocTask.new do |rdoc|
+  rdoc.main = "README.rdoc"
+  rdoc.rdoc_dir = "doc"
+  rdoc.title = "RRD"
+  rdoc.options += %w[ --line-numbers --inline-source --charset utf-8 ]
+  rdoc.rdoc_files.include("README.rdoc", "CHANGELOG.rdoc")
+  rdoc.rdoc_files.include("lib/**/*.rb")
 end
 
 task :default => :spec

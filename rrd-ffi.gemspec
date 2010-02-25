@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rrd-ffi}
-  s.version = "0.1.0"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["morellon", "fnando", "rafaelrosafu", "dalcico"]
@@ -22,11 +22,14 @@ Gem::Specification.new do |s|
      "Rakefile",
      "lib/rrd.rb",
      "lib/rrd/base.rb",
+     "lib/rrd/builder.rb",
+     "lib/rrd/ext/fixnum.rb",
      "lib/rrd/graph.rb",
      "lib/rrd/version.rb",
      "lib/rrd/wrapper.rb",
      "rrd-ffi.gemspec",
      "spec/rrd/base_spec.rb",
+     "spec/rrd/builder_spec.rb",
      "spec/rrd/graph_spec.rb",
      "spec/rrd/wrapper_spec.rb",
      "spec/rrd_spec.rb",
@@ -40,6 +43,7 @@ Gem::Specification.new do |s|
   s.summary = %q{RRDTool gem using librrd and ffi}
   s.test_files = [
     "spec/rrd/base_spec.rb",
+     "spec/rrd/builder_spec.rb",
      "spec/rrd/graph_spec.rb",
      "spec/rrd/wrapper_spec.rb",
      "spec/rrd_spec.rb",

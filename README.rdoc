@@ -33,7 +33,7 @@ If you are not using MAC OS and still have problems, export the RRD_PATH variabl
   rrd.restore("myrrd.xml")
 
   # Fetching data from rrd
-  rrd.fetch.each {|line| puts line.inspect}
+  rrd.fetch(:average).each {|line| puts line.inspect}
 
   # Collecting information from rrd
   puts rrd.info.to_yaml

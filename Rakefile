@@ -32,6 +32,13 @@ Spec::Rake::SpecTask.new(:spec) do |t|
   t.spec_files = FileList['spec/**/*_spec.rb']
 end
 
+desc "Rspec : run all with RCov"
+Spec::Rake::SpecTask.new('spec:rcov') do |t|
+  t.spec_files = FileList['spec/**/*.rb']
+  t.rcov = true
+  t.rcov_opts = ['--exclude', 'gems', '--exclude', 'spec']
+end
+
 Rake::RDocTask.new do |rdoc|
   rdoc.main = "README.rdoc"
   rdoc.rdoc_dir = "doc"

@@ -2,3 +2,4 @@
 *.png
 pkg
 doc
+coverage

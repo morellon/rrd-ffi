@@ -31,7 +31,9 @@ If you are not using MAC OS and still have problems, export the RRD_PATH variabl
 === Installing librrd
 
 Debian/Ubuntu: <tt>apt-get install librrd-dev</tt>
+
 Fedora/Red Hat: <tt>yum install rrdtool-devel</tt>
+
 Mac: <tt>port install rrdtool</tt>
 
 == Example Usage

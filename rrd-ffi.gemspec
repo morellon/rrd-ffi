@@ -39,10 +39,10 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{RRDTool gem using librrd and ffi}
   s.test_files = [
-    "spec/rrd/base_spec.rb",
+    "spec/rrd_spec.rb",
      "spec/rrd/graph_spec.rb",
      "spec/rrd/wrapper_spec.rb",
-     "spec/rrd_spec.rb",
+     "spec/rrd/base_spec.rb",
      "spec/spec_helper.rb"
   ]
 
@@ -53,13 +53,16 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<rspec>, [">= 0"])
       s.add_runtime_dependency(%q<ffi>, [">= 0"])
+      s.add_runtime_dependency(%q<hanna>, [">= 0"])
     else
       s.add_dependency(%q<rspec>, [">= 0"])
       s.add_dependency(%q<ffi>, [">= 0"])
+      s.add_dependency(%q<hanna>, [">= 0"])
     end
   else
     s.add_dependency(%q<rspec>, [">= 0"])
     s.add_dependency(%q<ffi>, [">= 0"])
+    s.add_dependency(%q<hanna>, [">= 0"])
   end
 end
 

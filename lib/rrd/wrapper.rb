@@ -49,6 +49,7 @@ module RRD
       attach_function :rrd_restore, [:int, :pointer], :int
       attach_function :rrd_graph, [:int, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer], :int
       attach_function :rrd_get_error, [], :string
+      attach_function :rrd_clear_error, [], :void
       
       # Set up a new Round Robin Database (RRD).
       def create(*args)
@@ -155,6 +156,7 @@ module RRD
       end
 
       def to_pointer(array_of_strings)
+        rrd_clear_error
         strptrs = []
         array_of_strings.each {|item| strptrs << FFI::MemoryPointer.from_string(item)}
 

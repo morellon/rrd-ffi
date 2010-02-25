@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["morellon", "fnando", "rafaelrosafu", "dalcico"]
-  s.date = %q{2010-02-24}
+  s.date = %q{2010-02-25}
   s.description = %q{Provides bindings for many RRD functions (using ffi gem and librrd), as well as some DSL for graphic building}
   s.email = %q{morellon@gmail.com}
   s.extra_rdoc_files = [
@@ -39,10 +39,10 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{RRDTool gem using librrd and ffi}
   s.test_files = [
-    "spec/rrd_spec.rb",
+    "spec/rrd/base_spec.rb",
      "spec/rrd/graph_spec.rb",
      "spec/rrd/wrapper_spec.rb",
-     "spec/rrd/base_spec.rb",
+     "spec/rrd_spec.rb",
      "spec/spec_helper.rb"
   ]
 

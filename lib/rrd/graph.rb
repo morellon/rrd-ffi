@@ -7,7 +7,11 @@ module RRD
     
     def initialize(output, parameters = {})
       @output = output
-      @parameters = parameters
+      
+      @parameters = {:start => Time.now - 1.day, :end => Time.now, :title => ""}
+      @parameters[:start] = @parameters[:start].to_i
+      @parameters[:end] = @parameters[:end].to_i
+      
       @definitions = []
       @printables = []
     end
@@ -17,6 +21,30 @@ module RRD
       definition = "DEF:#{data_name}=#{options[:from]}:#{dataset.keys.first}:#{dataset.values.first.to_s.upcase}"
       definitions << definition
       definition
+    end
+    
+    def using_calculated_data(data_name, options)
+      definition = "CDEF:#{data_name}=#{options[:calc]}"
+      definitions << definition
+      definition
+    end
+    
+    def using_value(value_name, options)
+      definition = "VDEF:#{value_name}=#{options[:calc]}"
+      definitions << definition
+      definition
+    end
+    
+    def print_comment(comment)
+      printable = "COMMENT:#{comment}"
+      printables << printable
+      printable
+    end
+    
+    def print_value(value_name, options)
+      printable = "GPRINT:#{value_name}:#{options[:format]}"
+      printables << printable
+      printable
     end
     
     def draw_line(options)
@@ -51,7 +79,7 @@ module RRD
     
     def save
       args = [output]
-      args += ["--title", parameters[:title]] if parameters[:title]
+      args += RRD.to_line_parameters(parameters)
       args += definitions
       args += printables
       

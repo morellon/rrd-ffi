@@ -18,10 +18,13 @@ module RRD
     
     # Basic usage: rrd.fetch :average 
     #
-    def fetch(consolidation_function, options = {:start => Time.now - 87840, :end => Time.now})
+    def fetch(consolidation_function, options = {})
+      options = {:start => Time.now - 1.day, :end => Time.now}.merge options
+      
       options[:start] = options[:start].to_i
       options[:end] = options[:end].to_i
-      line_params = options.reduce([]){|result, (key, value)| result += ["--#{key}", value.to_s]}
+      line_params = RRD.to_line_parameters(options)
+      line_params = line_params.keys.sort.reduce([]) { |result, key| result += [key, line_params[key]] }
       
       Wrapper.fetch(rrd_file, consolidation_function.to_s.upcase, *line_params)
     end
@@ -47,5 +50,6 @@ module RRD
     def restore(xml_file)
       Wrapper.restore(xml_file, rrd_file)
     end
+    
   end
 end

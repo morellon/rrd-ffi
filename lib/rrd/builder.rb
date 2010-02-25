@@ -5,8 +5,9 @@ module RRD
     DATASOURCE_TYPES = [:gauge, :counter, :derive, :absolute]
     ARCHIVE_TYPES = [:average, :min, :max, :last]
         
-    def initialize(step = 5.minutes)
-      @step = step
+    def initialize(rrd_file, options = {})
+      options = {:step => 5.minutes}.merge options
+      @step = options[:step]
       @datasources = []
       @archives = []
     end

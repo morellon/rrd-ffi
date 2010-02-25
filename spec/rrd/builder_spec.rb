@@ -2,6 +2,8 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe RRD::Builder do
   
+  subject {RRD::Builder.new "file.rrd"}
+  
   it "should store a datasource" do
     datasource = subject.datasource "memory", :type => :gauge, :heartbeat => 10.minutes, :min => 0, :max => :unlimited
     datasource.should == "DS:memory:GAUGE:600:0:U"

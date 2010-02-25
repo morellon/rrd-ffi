@@ -14,5 +14,9 @@ module RRD
     graph.instance_eval(&block)
     graph.save
   end
+  
+  def to_line_parameters(hash)
+    Hash[*hash.reduce([]) { |result, (key,value)| result += ["--#{key}", value.to_s] }]
+  end
 end
 

@@ -16,7 +16,8 @@ module RRD
   end
   
   def to_line_parameters(hash)
-    Hash[*hash.reduce([]) { |result, (key,value)| result += ["--#{key}", value.to_s] }]
+    line_params = Hash[*hash.reduce([]) { |result, (key,value)| result += ["--#{key}", value.to_s] }]
+    line_params.keys.sort.reduce([]) { |result, key| result += [key, line_params[key]] }
   end
 end
 

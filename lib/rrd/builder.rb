@@ -1,13 +1,16 @@
 module RRD
   class Builder
-    attr_accessor :step, :datasources, :archives
+    attr_accessor :output, :parameters, :datasources, :archives
     
     DATASOURCE_TYPES = [:gauge, :counter, :derive, :absolute]
     ARCHIVE_TYPES = [:average, :min, :max, :last]
         
-    def initialize(rrd_file, options = {})
-      options = {:step => 5.minutes}.merge options
-      @step = options[:step]
+    def initialize(output, parameters = {})
+      @output = output
+      
+      @parameters = {:step => 5.minutes, :start => Time.now - 10.seconds }.merge parameters
+      @parameters[:start] = @parameters[:start].to_i
+      
       @datasources = []
       @archives = []
     end
@@ -22,11 +25,21 @@ module RRD
     
     def archive(consolidation_function, options = {})
       options = {:every => 5.minutes, :during => 1.day}.merge options
-      archive_steps = options[:every]/step
+      archive_steps = options[:every]/parameters[:step]
       archive_rows = options[:during]/options[:every]
       archive = "RRA:#{consolidation_function.to_s.upcase}:0.5:#{archive_steps}:#{archive_rows}"
       archives << archive
       archive
+    end
+    
+    def save
+      args = [output]
+      line_parameters = RRD.to_line_parameters(parameters)
+      args += line_parameters
+      args += datasources
+      args += archives
+      
+      Wrapper.create(*args)
     end
   end
 end

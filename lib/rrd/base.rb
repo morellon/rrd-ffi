@@ -6,6 +6,12 @@ module RRD
       @rrd_file = rrd_file
     end
     
+    def create(options = {}, &block)
+      builder = RRD::Builder.new(rrd_file, options)
+      builder.instance_eval(&block)
+      builder.save
+    end
+    
     # Basic usage: rrd.update Time.now, 20.0, 20, nil, 2
     #
     # Note: All datasources must receive a value, based on datasources order in rrd file
@@ -24,7 +30,6 @@ module RRD
       options[:start] = options[:start].to_i
       options[:end] = options[:end].to_i
       line_params = RRD.to_line_parameters(options)
-      line_params = line_params.keys.sort.reduce([]) { |result, key| result += [key, line_params[key]] }
       
       Wrapper.fetch(rrd_file, consolidation_function.to_s.upcase, *line_params)
     end

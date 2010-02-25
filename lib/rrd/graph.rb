@@ -1,33 +1,41 @@
 module RRD
   class Graph
     GRAPH_OPTIONS = [:color, :label]
-    GRAPH_TYPE = {:line => "LINE1", :area => "AREA"}
     
-    attr_accessor :params, :output, :options
+    attr_accessor :output, :parameters, :definitions, :printables
     
-    def initialize(output, options = {})
+    def initialize(output, parameters = {})
       @output = output
-      @options = options
-      @params = []
+      @parameters = parameters
+      @definitions = []
+      @printables = []
     end
     
     def line(rrd_file, options = {})
-      params << [:line, rrd_file, options]
+      dataset = options.reject {|name, value| GRAPH_OPTIONS.include?(name.to_sym)}
+      name = "#{dataset.keys.first}_#{dataset.values.first.to_s}"
+      definition = "DEF:#{name}=#{rrd_file}:#{dataset.keys.first}:#{dataset.values.first.to_s.upcase}"
+      definitions << definition
+      printable = "LINE1:#{name}#{options[:color]}:#{options[:label]}"
+      printables << printable
+      [definition, printable]
     end
     
     def area(rrd_file, options = {})
-      params << [:area, rrd_file, options]
+      dataset = options.reject {|name, value| GRAPH_OPTIONS.include?(name.to_sym)}
+      name = "#{dataset.keys.first}_#{dataset.values.first.to_s}"
+      definition = "DEF:#{name}=#{rrd_file}:#{dataset.keys.first}:#{dataset.values.first.to_s.upcase}"
+      definitions << definition
+      printable = "AREA:#{name}#{options[:color]}:#{options[:label]}"
+      printables << printable
+      [definition, printable]
     end
     
     def save
       args = [output]
-      args += ["--title", options[:title]] if options[:title]
-      
-      params.each_with_index do |(type, file, opts), i|
-        dataset = opts.reject {|name, value| GRAPH_OPTIONS.include?(name.to_sym)}
-        args << "DEF:d#{i}=#{file}:#{dataset.keys.first}:#{dataset.values.first.to_s.upcase}"
-        args << "#{GRAPH_TYPE[type.to_sym]}:d#{i}#{opts[:color]}:#{opts[:label]}"
-      end
+      args += ["--title", parameters[:title]] if parameters[:title]
+      args += definitions
+      args += printables
       
       Wrapper.graph(*args)
     end

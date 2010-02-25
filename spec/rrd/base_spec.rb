@@ -6,11 +6,15 @@ describe RRD::Base do
     @rrd = RRD::Base.new(RRD_FILE)
   end
   
-  xit "should create a rrd file using dsl" do
+  it "should create a rrd file using dsl" do
+    File.should_not be_file(RRD_FILE)
+    
     @rrd.create :start => Time.now - 10.seconds, :step => 5.minutes do
       datasource "memory", :type => :gauge, :heartbeat => 10.minutes, :min => 0, :max => :unlimited
       archive :average, :every => 10.minutes, :during => 1.year
     end
+    
+    File.should be_file(RRD_FILE)
   end
   
   it "should update the rrd file with data" do

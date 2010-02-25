@@ -6,6 +6,13 @@ describe RRD::Base do
     @rrd = RRD::Base.new(RRD_FILE)
   end
   
+  xit "should create a rrd file using dsl" do
+    @rrd.create :start => Time.now - 10.seconds, :step => 5.minutes do
+      datasource "memory", :type => :gauge, :heartbeat => 10.minutes, :min => 0, :max => :unlimited
+      archive :average, :every => 10.minutes, :during => 1.year
+    end
+  end
+  
   it "should update the rrd file with data" do
     time = Time.now
     # one datum for every datasource, ordered
@@ -18,9 +25,9 @@ describe RRD::Base do
   it "should fetch data from rrd file" do
     start_time = Time.now - 3600
     end_time = Time.now
-    raw_params = ["AVERAGE", "--start", "#{start_time.to_i}", "--end", "#{end_time.to_i}", "--resolution", "1"]
+    raw_params = ["AVERAGE", "--resolution", "1", "--start", "#{start_time.to_i}", "--end", "#{end_time.to_i}"]
     RRD::Wrapper.should_receive(:fetch).with(RRD_FILE, *raw_params).and_return([])
-    @rrd.fetch(:average, :start => start_time, :end => end_time, :resolution => 1)
+    @rrd.fetch(:average, :start => start_time, :end => end_time, :resolution => 1.second)
   end
   
   it "should return the rrd file information" do

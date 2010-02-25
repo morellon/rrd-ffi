@@ -3,6 +3,7 @@ require "rrd/version"
 require "rrd/wrapper"
 require "rrd/base"
 require "rrd/graph"
+require "rrd/ext/fixnum"
 
 module RRD
   extend self

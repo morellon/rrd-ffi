@@ -1,5 +1,9 @@
 = Changelog
 
+== 2010-02-25
+
+* Fixed error message to be cleared before every call to wrapper. It was causing problems when doing a valid call after an invalid one
+
 == 2010-02-24
 
 * Released version 0.1.0

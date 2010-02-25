@@ -12,6 +12,7 @@ module RRD
     def update(time, *data)
       new_data = data.map {|item| item.nil? ? "U" : item}
       new_data = [time.to_i] + new_data
+      
       Wrapper.update(rrd_file, new_data.join(":"))
     end
     

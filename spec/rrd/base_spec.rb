@@ -6,6 +6,29 @@ describe RRD::Base do
     @rrd = RRD::Base.new(RRD_FILE)
   end
   
+  it "should update the rrd file with data" do
+    time = Time.now
+    # one datum for every datasource, ordered
+    data = [20, 20.0, nil]
+    update_data = "#{time.to_i}:20:20.0:U"
+    RRD::Wrapper.should_receive(:update).with(RRD_FILE, update_data).and_return(true)
+    @rrd.update(time, *data).should be_true
+  end
+  
+  it "should fetch data from rrd file" do
+    start_time = Time.now - 3600
+    end_time = Time.now
+    raw_params = ["AVERAGE", "--start", "#{start_time.to_i}", "--end", "#{end_time.to_i}", "--resolution", "1"]
+    RRD::Wrapper.should_receive(:fetch).with(RRD_FILE, *raw_params).and_return([])
+    @rrd.fetch(:average, :start => start_time, :end => end_time, :resolution => 1)
+  end
+  
+  it "should return the rrd file information" do
+    info = {"filename" => RRD_FILE}
+    RRD::Wrapper.should_receive(:info).with(RRD_FILE).and_return(info)
+    @rrd.info.should == info
+  end
+  
   it "should restore a rrd from xml" do
     RRD::Wrapper.should_receive(:restore).with(XML_FILE, RRD_FILE).and_return(true)
     @rrd.restore(XML_FILE).should be_true

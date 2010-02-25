@@ -14,7 +14,7 @@ begin
     gem.name = "rrd-ffi"
     gem.version = RRD::Version::STRING
     gem.summary = %Q{RRDTool gem using librrd and ffi}
-    gem.description = %Q{Provides bindings for many RRD functions (using ffi gem and librrd), as well as some DSL for graphic building}
+    gem.description = %Q{Provides bindings for many RRD functions (using ffi gem and librrd), as well as DSLs for graphic and rrd building. You must have librrd in your system!}
     gem.email = "morellon@gmail.com"
     gem.homepage = "http://github.com/morellon/rrd-ffi"
     gem.authors = ["morellon", "fnando", "rafaelrosafu", "dalcico"]

@@ -35,11 +35,32 @@ If you are not using MAC OS and still have problems, export the RRD_PATH variabl
   # Looking for the first and last entered dates 
   puts rrd.starts_at
   puts rrd.ends_at
+
+=== DSLs
+
+  # Creating a new rrd
+  rrd = RRD::Base.new("myrrd.rrd")
+  rrd.create :start => Time.now - 10.seconds, :step => 5.minutes do
+    datasource "memory", :type => :gauge, :heartbeat => 10.minutes, :min => 0, :max => :unlimited
+    archive :average, :every => 10.minutes, :during => 1.year
+  end
   
   # Generating a graph with memory and cpu usage from myrrd.rrd file
   RRD.graph "graph.png", :title => "Test", :width => 800, :height => 250 do
     area "myrrd.rrd", :cpu0 => :average, :color => "#00FF00", :label => "CPU 0"
     line "myrrd.rrd", :memory => :average, :color => "#0000FF", :label => "Memory"
+  end
+
+  # Generating a more complex graph using advanced DSL
+  RRD.graph IMG_FILE, :title => "Test", :width => 800, :height => 250, :start => Time.now - 1.day, :end => Time.now do
+    for_rrd_data "cpu0", :cpu0 => :average, :from => RRD_FILE
+    for_rrd_data "mem", :memory => :average, :from => RRD_FILE
+    using_calculated_data "half_mem", :calc => "mem,2,/"
+    using_value "mem_avg", :calc => "mem,AVERAGE"
+    draw_line :data => "mem", :color => "#0000FF", :label => "Memory", :width => 1
+    draw_area :data => "cpu0", :color => "#00FF00", :label => "CPU 0"
+    print_comment "Information - "
+    print_value "mem_avg", :format => "%6.2lf %SB"
   end
 
 == Raw API Usage

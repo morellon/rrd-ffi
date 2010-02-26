@@ -67,7 +67,12 @@ module RRD
 
       # Get data for a certain time period from a RRD.
       # 
-      # Returns an array of arrays (which contains the date and values for all datasources)
+      # Returns an array of arrays (which contains the date and values for all datasources):
+      #
+      #   [["time"    , "cpu", "memory"],
+      #    [1266933600, "0.5", "511"   ],
+      #    [1266933900, "0.9", "253"   ]]
+      #
       def fetch(*args)
         #FIXME: Refactor this
         start_time_ptr = empty_pointer
@@ -93,12 +98,10 @@ module RRD
         result = []
         result << ["time"] + ds_names
         (0..result_lines-1).each do |line|
-          
           date = start_time + line*step
           first = ds_count*line
           last = ds_count*line + ds_count - 1
           result << [date] + values[first..last]
-          
         end
         
         result

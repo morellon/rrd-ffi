@@ -76,9 +76,9 @@ module RRD
         ds_count_ptr = empty_pointer
         ds_names_ptr = empty_pointer
         
-        values = FFI::MemoryPointer.new(:pointer)
+        values_ptr = FFI::MemoryPointer.new(:pointer)
         argv = to_pointer(["fetch"] + args)
-        raise rrd_get_error unless rrd_fetch(args.size+1, argv, start_time_ptr, end_time_ptr, step_ptr, ds_count_ptr, ds_names_ptr, values) == 0
+        raise rrd_get_error unless rrd_fetch(args.size+1, argv, start_time_ptr, end_time_ptr, step_ptr, ds_count_ptr, ds_names_ptr, values_ptr) == 0
         
         ds_count = ds_count_ptr.get_int(0)
         start_time = start_time_ptr.get_int(0)
@@ -86,14 +86,19 @@ module RRD
         step = step_ptr.get_int(0)
         
         result_lines = (end_time-start_time)/step
+        
+        ds_names = ds_names_ptr.get_pointer(0).get_array_of_string(0, ds_count)
+        values = values_ptr.get_pointer(0).get_array_of_double(0, result_lines * ds_count)
+        
         result = []
-        (0..result_lines-1).each do |i|
-          data = []
-          data << start_time + i*step
-          (0..ds_count-1).each do |j|
-            data << values.get_pointer(0)[8*(ds_count*i+j)].get_double(0)
-          end
-          result << data
+        result << ["time"] + ds_names
+        (0..result_lines-1).each do |line|
+          
+          date = start_time + line*step
+          first = ds_count*line
+          last = ds_count*line + ds_count - 1
+          result << [date] + values[first..last]
+          
         end
         
         result

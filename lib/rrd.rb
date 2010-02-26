@@ -9,7 +9,7 @@ require "rrd/ext/fixnum"
 module RRD
   extend self
   
-  def graph(image_file, options, &block)
+  def graph(image_file, options = {}, &block)
     graph = Graph.new(image_file, options)
     graph.instance_eval(&block)
     graph.save

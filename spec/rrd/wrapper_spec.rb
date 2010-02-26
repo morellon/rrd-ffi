@@ -2,7 +2,30 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe RRD::Wrapper do
   
+  context "when looking for librrd path" do
+    before :each do
+      Object.send(:remove_const, :RRD_LIB) if defined?(::RRD_LIB) 
+      ENV["RRD_LIB"] = nil
+    end
+      
+    it "should look on RRD_LIB constant first" do
+      ::RRD_LIB = "first"
+      ENV["RRD_LIB"] = "second"
+      RRD::Wrapper.detect_rrd_lib.should == "first"
+    end
+    
+    it "should look on ENV if RRD_LIB is not defined" do
+      ENV["RRD_LIB"] = "second"
+      RRD::Wrapper.detect_rrd_lib.should == "second"
+    end
+    
+    it "should return 'rrd' for FFI to look up if can't use RRD_LIB or ENV" do
+      RRD::Wrapper.detect_rrd_lib.should == "rrd"
+    end
+  end
+  
   context "when no rrd file exists" do
+    
     it "should restore a rrd from xml" do
       RRD::Wrapper.restore(XML_FILE, RRD_FILE).should be_true
     end
@@ -50,6 +73,40 @@ describe RRD::Wrapper do
     it "should create a graph correctly" do
       RRD::Wrapper.graph(IMG_FILE, "DEF:data=#{RRD_FILE}:memory:AVERAGE", "LINE1:data#0000FF:Memory Avg")
       File.should be_file(IMG_FILE)
+    end
+    
+    it "should return the error correctly, cleaning the error var" do
+      RRD::Wrapper.error.should be_empty
+      RRD::Wrapper.fetch("error").should be_false
+      RRD::Wrapper.error.should_not be_empty
+    end
+  end
+  
+  context "when using bang methods" do
+    
+    it "should respond to them" do
+      RRD::Wrapper::BANG_METHODS.each do |method|
+        RRD::Wrapper.respond_to?(method).should be_true
+      end
+    end
+    
+    it "should list them" do
+      (RRD::Wrapper.methods & RRD::Wrapper::BANG_METHODS).should == RRD::Wrapper::BANG_METHODS
+    end
+    
+    it "should return the normal method result" do
+      RRD::Wrapper.restore!(XML_FILE, RRD_FILE).should be_true
+    end
+    
+    it "should raise error if the normal method is not bangable" do
+      RRD::Wrapper.should_not_receive(:bang)
+      lambda{RRD::Wrapper.not_bangable}.should raise_error(NoMethodError)
+    end
+    
+    it "should raise error if the normal method result is false" do
+      RRD::Wrapper.should_receive(:info).and_return(false)
+      RRD::Wrapper.should_receive(:error).and_return("error message")
+      lambda{RRD::Wrapper.bang(:info)}.should raise_error("error message")
     end
   end
   

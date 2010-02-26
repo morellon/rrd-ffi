@@ -4,6 +4,19 @@ module RRD
   # See http://oss.oetiker.ch/rrdtool/doc/rrdtool.en.html for details on the parameters
   class Wrapper
     
+    INFO_TYPE = { 0 => :u_val, 1 => :u_cnt, 2 => :u_str, 3 => :u_int, 4 => :u_blob}
+    BANG_METHODS = [:info!, :fetch!, :first!, :last!, :restore!, :graph!, :create!, :update!]
+    
+    def self.detect_rrd_lib
+      if defined?(RRD_LIB)
+        RRD_LIB
+      elsif ENV["RRD_LIB"]
+        ENV["RRD_LIB"] 
+      else
+        "rrd"
+      end
+    end
+    
     class RRDBlob < FFI::Struct
       layout :size,  :ulong,
              :ptr, :pointer
@@ -26,20 +39,8 @@ module RRD
     
     class << self
       extend FFI::Library
-      
-      INFO_TYPE = { 0 => :u_val, 1 => :u_cnt, 2 => :u_str, 3 => :u_int, 4 => :u_blob}
-      
-      def self.rrd_lib
-        if defined?(RRD_LIB)
-          RRD_LIB
-        elsif ENV["RRD_LIB"]
-          ENV["RRD_LIB"] 
-        else
-          "rrd"
-        end
-      end
 
-      ffi_lib rrd_lib
+      ffi_lib RRD::Wrapper.detect_rrd_lib
       attach_function :rrd_create, [:int, :pointer], :int
       attach_function :rrd_update, [:int, :pointer], :int
       attach_function :rrd_info, [:int, :pointer], :pointer
@@ -54,15 +55,14 @@ module RRD
       # Set up a new Round Robin Database (RRD).
       def create(*args)
         argv = to_pointer(["create"] + args)
-        raise rrd_get_error unless rrd_create(args.size+1, argv) == 0
+        rrd_create(args.size+1, argv) == 0
         true
       end
 
       # Store new data values into an RRD.
       def update(*args)
         argv = to_pointer(["update"] + args)
-        raise rrd_get_error unless rrd_update(args.size+1, argv) == 0
-        true
+        rrd_update(args.size+1, argv) == 0
       end
 
       # Get data for a certain time period from a RRD.
@@ -83,7 +83,7 @@ module RRD
         
         values_ptr = FFI::MemoryPointer.new(:pointer)
         argv = to_pointer(["fetch"] + args)
-        raise rrd_get_error unless rrd_fetch(args.size+1, argv, start_time_ptr, end_time_ptr, step_ptr, ds_count_ptr, ds_names_ptr, values_ptr) == 0
+        return false unless rrd_fetch(args.size+1, argv, start_time_ptr, end_time_ptr, step_ptr, ds_count_ptr, ds_names_ptr, values_ptr) == 0
         
         ds_count = ds_count_ptr.get_int(0)
         start_time = start_time_ptr.get_int(0)
@@ -121,6 +121,7 @@ module RRD
           result = item[:next]
         end
         
+        return false if info.empty?
         info
       end
       
@@ -130,7 +131,7 @@ module RRD
       def first(*args)
         argv = to_pointer(["first"] + args)
         date = rrd_first(args.size+1, argv)
-        raise rrd_get_error if date == -1
+        return false if date == -1
         date
       end
       
@@ -140,31 +141,57 @@ module RRD
       def last(*args)
         argv = to_pointer(["last"] + args)
         date = rrd_last(args.size+1, argv)
-        raise rrd_get_error if date == -1
+        return false if date == -1
         date
       end
       
       # Restore an RRD in XML format to a binary RRD.
       def restore(*args)
         argv = to_pointer(["restore"] + args)
-        raise rrd_get_error unless rrd_restore(args.size+1, argv) == 0
-        true
+        rrd_restore(args.size+1, argv) == 0
       end
       
       # Create a graph from data stored in one or several RRDs.
       def graph(*args)
         argv = to_pointer(["graph"] + args)
-        raise rrd_get_error unless rrd_graph(args.size+1, argv, *Array.new(6, empty_pointer)) == 0
-        true
+        xsize_ptr = empty_pointer
+        ysize_ptr = empty_pointer
+        ymin_ptr = empty_pointer
+        ymax_ptr = empty_pointer
+        rrd_graph(args.size+1, argv, empty_pointer, xsize_ptr, ysize_ptr, empty_pointer, ymin_ptr, ymax_ptr) == 0
+      end
+
+      def error
+        error = rrd_get_error
+        rrd_clear_error
+        error
       end
       
+      def methods
+        super + BANG_METHODS
+      end
+
+      def respond_to?(method, include_private = false)
+        super || BANG_METHODS.include?(method.to_sym)
+      end   
+        
+      def method_missing(method, *args)
+        return bang($1, *args) if method.to_s =~ /^(.+)!$/ && BANG_METHODS.include?(method.to_sym)
+        super
+      end
+      
+      def bang(method, *args)
+        result = send(method, *args)
+        raise error unless result
+        result
+      end
+   
       private
       def empty_pointer
         FFI::MemoryPointer.new(:pointer)
       end
 
       def to_pointer(array_of_strings)
-        rrd_clear_error
         strptrs = []
         array_of_strings.each {|item| strptrs << FFI::MemoryPointer.from_string(item)}
 

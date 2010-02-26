@@ -1,5 +1,10 @@
 = Changelog
 
+== 2010-02-26
+
+* Added bang methods to wrapper
+* Added error method to wrapper
+
 == 2010-02-25
 
 * Fixed error message to be cleared before every call to wrapper. It was causing problems when doing a valid call after an invalid one

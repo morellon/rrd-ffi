@@ -6,6 +6,10 @@ module RRD
       @rrd_file = rrd_file
     end
     
+    def error
+      Wrapper.error
+    end
+    
     def create(options = {}, &block)
       builder = RRD::Builder.new(rrd_file, options)
       builder.instance_eval(&block)

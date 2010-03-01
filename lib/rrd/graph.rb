@@ -8,7 +8,7 @@ module RRD
     def initialize(output, parameters = {})
       @output = output
       
-      @parameters = {:start => Time.now - 1.day, :end => Time.now, :title => ""}
+      @parameters = {:start => Time.now - 1.day, :end => Time.now, :title => ""}.merge parameters
       @parameters[:start] = @parameters[:start].to_i
       @parameters[:end] = @parameters[:end].to_i
       

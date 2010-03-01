@@ -55,6 +55,12 @@ describe RRD::Base do
     @rrd.ends_at.should be_a(Time)
   end
   
+  it "should return the error" do
+    @rrd.error.should be_empty
+    @rrd.restore("unknown file").should be_false
+    @rrd.error.should_not be_empty
+  end
+  
   it "should respond to first"
   it "should respond to last"
 end

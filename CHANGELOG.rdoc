@@ -1,21 +1,20 @@
 = Changelog
 
-== 2010-02-26
+== 2010-03-01 version 0.2.1
 
 * Added bang methods to wrapper
 * Added error method to wrapper
 
-== 2010-02-25
+== 2010-02-25 version 0.2.0
 
 * Fixed error message to be cleared before every call to wrapper. It was causing problems when doing a valid call after an invalid one
 * Added advanced DSL for graphic building
 * Added DSL for creating RRD file
 * Added to RRD::Base methods create, update, fetch, info
-* Released version 0.2.0
+* Released
 
-== 2010-02-24
+== 2010-02-24 version 0.1.0
 
-* Released version 0.1.0
 * Basic DSL for graphic building
 * Added to RRD::Base methods first, last, restore
 * Added bindings to librrd through RRD::Wrapper - create, update, fetch, info, first, last, restore, graph

@@ -162,9 +162,11 @@ module RRD
       end
 
       def error
-        error = rrd_get_error
+        rrd_get_error
+      end
+      
+      def clear_error
         rrd_clear_error
-        error
       end
       
       def methods
@@ -191,7 +193,9 @@ module RRD
         FFI::MemoryPointer.new(:pointer)
       end
 
+      # FIXME: remove clear_error from here
       def to_pointer(array_of_strings)
+        clear_error
         strptrs = []
         array_of_strings.each {|item| strptrs << FFI::MemoryPointer.from_string(item)}
 

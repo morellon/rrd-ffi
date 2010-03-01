@@ -55,6 +55,10 @@ Mac: <tt>port install rrdtool</tt>
   puts rrd.starts_at
   puts rrd.ends_at
 
+  # Error handling
+  rrd.fetch(:unknown_function) #should return false
+  puts rrd.error
+
 === DSLs
 
   # Creating a new rrd

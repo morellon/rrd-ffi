@@ -4,7 +4,7 @@ describe RRD::Graph do
     
   before do
     RRD::Base.new(RRD_FILE).restore(XML_FILE)
-    @graph = RRD::Graph.new IMG_FILE, :title => "Title", :width => 800, :height => 200
+    @graph = RRD::Graph.new IMG_FILE, :title => "Title", :width => 800, :height => 200, :full_size_mode => true
   end
   
   it "should store definition for rrd data" do
@@ -57,6 +57,7 @@ describe RRD::Graph do
   it "should create a graph correctly" do
     @graph.line RRD_FILE, :memory => :average, :color => "#0000FF", :label => "Memory Avg"
     RRD::Wrapper.should_receive(:graph).with(IMG_FILE,
+                                            "--full-size-mode",
                                             "--end", anything(),
                                             "--height", "200",
                                             "--start", anything(),

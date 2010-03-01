@@ -71,7 +71,7 @@ describe RRD::Wrapper do
     end
     
     it "should create a graph correctly" do
-      RRD::Wrapper.graph(IMG_FILE, "--width", "1000", "--height", "300", "DEF:data=#{RRD_FILE}:memory:AVERAGE", "LINE1:data#0000FF:Memory Avg")
+      RRD::Wrapper.graph(IMG_FILE, "--width", "1000", "--height", "300", "DEF:data=#{RRD_FILE}:memory:AVERAGE", "LINE1:data#0000FF:Memory Avg", "--full-size-mode")
       File.should be_file(IMG_FILE)
     end
     

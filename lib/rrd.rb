@@ -15,9 +15,15 @@ module RRD
     graph.save
   end
   
-  def to_line_parameters(hash)
-    line_params = Hash[*hash.reduce([]) { |result, (key,value)| result += ["--#{key}", value.to_s] }]
-    line_params.keys.sort.reduce([]) { |result, key| result += [key, line_params[key]] }
+  def to_line_parameters(hash, known_flags = [])
+    used_flags = []
+    known_flags.each do |flag|
+      used_flags << "--#{flag}".gsub(/_/, "-") if hash.delete(flag)
+    end
+    
+    line_params = Hash[*hash.reduce([]) { |result, (key,value)| result += ["--#{key}".gsub(/_/, "-"), value.to_s] }]
+    params = line_params.keys.sort.reduce([]) { |result, key| result += [key, line_params[key]] }
+    used_flags + params
   end
 end
 

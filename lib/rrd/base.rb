@@ -2,7 +2,10 @@ module RRD
   # TODO: add bang methods
   class Base
     attr_accessor :rrd_file
-      
+    
+    RESTORE_FLAGS = [:force_overwrite, :range_check]
+    DUMP_FLAGS = [:no_header]
+
     def initialize(rrd_file)
       @rrd_file = rrd_file
     end
@@ -58,8 +61,8 @@ module RRD
   
     # See RRD::Wrapper.restore
     def restore(xml_file, options = {})
-      line_params = []
-      line_params << "--force-overwrite" if options[:overwrite]
+      options = options.clone
+      line_params = RRD.to_line_parameters(options, RESTORE_FLAGS)
       Wrapper.restore(xml_file, rrd_file, *line_params)
     end
     

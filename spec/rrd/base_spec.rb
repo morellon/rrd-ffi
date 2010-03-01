@@ -42,7 +42,7 @@ describe RRD::Base do
   
   it "should restore a rrd from xml" do
     RRD::Wrapper.should_receive(:restore).with(XML_FILE, RRD_FILE, "--force-overwrite").and_return(true)
-    @rrd.restore(XML_FILE, :overwrite => true).should be_true
+    @rrd.restore(XML_FILE, :force_overwrite => true).should be_true
   end
   
   it "should return the starting date" do

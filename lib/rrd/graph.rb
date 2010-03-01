@@ -2,6 +2,9 @@ module RRD
   class Graph
     GRAPH_OPTIONS = [:color, :label]
     DEF_OPTIONS= [:from]
+    GRAPH_FLAGS = [:only_graph, :full_size_mode, :rigid, :alt_autoscale, :no_gridfit,
+             :alt_y_grid, :logarithmic, :no_legend, :force_rules_legend, :lazy,
+             :pango_markup, :slope_mode, :interlaced] 
     
     attr_accessor :output, :parameters, :definitions, :printables
     
@@ -79,7 +82,7 @@ module RRD
     
     def save
       args = [output]
-      args += RRD.to_line_parameters(parameters)
+      args += RRD.to_line_parameters(parameters, GRAPH_FLAGS)
       args += definitions
       args += printables
       

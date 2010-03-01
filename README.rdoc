@@ -42,7 +42,7 @@ Mac: <tt>port install rrdtool</tt>
   require "rrd"
   rrd = RRD::Base.new("myrrd.rrd")
   # Restoring a rrd file from xml
-  rrd.restore("myrrd.xml")
+  rrd.restore("myrrd.xml", :overwrite => true)
 
   # Fetching data from rrd
   rrd.fetch(:average).each {|line| puts line.inspect}

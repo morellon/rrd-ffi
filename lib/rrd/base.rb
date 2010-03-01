@@ -1,4 +1,5 @@
 module RRD
+  # TODO: add bang methods
   class Base
     attr_accessor :rrd_file
       

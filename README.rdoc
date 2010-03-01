@@ -56,7 +56,7 @@ Mac: <tt>port install rrdtool</tt>
   puts rrd.ends_at
 
   # Error handling
-  rrd.fetch(:unknown_function) #should return false
+  rrd.fetch(:unknown_function) # should return false
   puts rrd.error
 
 === DSLs
@@ -88,11 +88,31 @@ Mac: <tt>port install rrdtool</tt>
 
 == Raw API Usage
 
+Normal methods return false on error, or the expected result otherwise.
+
+Bang methods raise exception on error.
+
+  # Restoring a rrd file from xml
+  RRD::Wrapper.restore "myrrd.xml", "myrrd.rrd"
+
   # Creating a rrd file
   RRD::Wrapper.create "myrrd.rrd", "--step", "300", "DS:ifOutOctets:COUNTER:1800:0:4294967295", "RRA:AVERAGE:0.5:1:2016"
   
   # Updating rrd with a new value
   RRD::Wrapper.update "myrrd.rrd", "N:500000000"
 
+	# Fetching average data
+  RRD::Wrapper.fetch "myrrd.rrd", "AVERAGE"
+
+	# Looking for the first and last entered dates 
+  RRD::Wrapper.first "myrrd.rrd"
+  RRD::Wrapper.last "myrrd.rrd"
+
   # Creating a graph
   RRD::Wrapper.graph("graph.png", "DEF:data=myrrd.rrd:ifOutOctets:AVERAGE", "LINE1:data#0000FF:Output bytes")
+
+  # Getting the error happened
+  puts RRD::Wrapper.error
+
+  # Throwing the error if happens
+  RRD::Wrapper.fetch! "myrrd.rrd", "WRONG FUNCTION"

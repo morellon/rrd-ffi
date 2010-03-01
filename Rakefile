@@ -1,6 +1,8 @@
+$:.unshift(File.dirname(__FILE__) + "/lib")
+
 require "rake"
 require "spec/rake/spectask"
-require "lib/rrd/version"
+require "rrd/version"
 
 begin
   require "hanna/rdoctask"

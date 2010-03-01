@@ -11,6 +11,7 @@
 * Added advanced DSL for graphic building
 * Added DSL for creating RRD file
 * Added to RRD::Base methods create, update, fetch, info
+* Released version 0.2.0
 
 == 2010-02-24
 

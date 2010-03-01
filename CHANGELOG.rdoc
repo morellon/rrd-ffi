@@ -9,7 +9,7 @@
 
 * TODO: bang methods to base
 * TODO: add more rrd functions (dump, tune, xport, resize)
-* TODO: Escape ':' on graph label
+* Escape ':' on graph label
 * Added flags to be used on RRD::Base instances and for building graphs
 
 == 2010-03-01 version 0.2.1

@@ -8,7 +8,7 @@ describe RRD do
   
   it "should create a graph using simple DSL" do
     result = RRD.graph IMG_FILE, :title => "Test", :width => 800, :height => 250 do
-      area RRD_FILE, :cpu0 => :average, :color => "#00FF00", :label => "CPU 0"
+      area RRD_FILE, :cpu0 => :average, :color => "#00FF00", :label => "CPU: 0"
       line RRD_FILE, :memory => :average, :color => "#0000FF", :label => "Memory"
     end
     
@@ -22,7 +22,7 @@ describe RRD do
       for_rrd_data "mem", :memory => :average, :from => RRD_FILE #TODO: :start => Time.now - 1.day, :end => Time.now, :shift => 1.hour
       using_calculated_data "half_mem", :calc => "mem,2,/"
       using_value "mem_avg", :calc => "mem,AVERAGE"
-      draw_line :data => "mem", :color => "#0000FF", :label => "Memory", :width => 1
+      draw_line :data => "mem", :color => "#0000FF", :label => "Memory: Average", :width => 1
       draw_area :data => "cpu0", :color => "#00FF00", :label => "CPU 0"
       print_comment "Information - "
       print_value "mem_avg", :format => "%6.2lf %SB"

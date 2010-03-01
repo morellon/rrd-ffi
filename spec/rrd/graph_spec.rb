@@ -43,19 +43,19 @@ describe RRD::Graph do
   end
   
   it "should store definition and printable for line" do
-    result = @graph.line RRD_FILE, :memory => :average, :color => "#0000FF", :label => "Memory Avg"
+    result = @graph.line RRD_FILE, :memory => :average, :color => "#0000FF", :label => "Memory: Avg"
     result[0].should == "DEF:memory_average=#{RRD_FILE}:memory:AVERAGE"
-    result[1].should == "LINE1:memory_average#0000FF:Memory Avg"
+    result[1].should == "LINE1:memory_average#0000FF:Memory\\: Avg"
   end
   
   it "should store definition and printable for area" do
-    result = @graph.area RRD_FILE, :memory => :average, :color => "#0000FF", :label => "Memory Avg"
+    result = @graph.area RRD_FILE, :memory => :average, :color => "#0000FF", :label => "Memory: Avg"
     result[0].should == "DEF:memory_average=#{RRD_FILE}:memory:AVERAGE"
-    result[1].should == "AREA:memory_average#0000FF:Memory Avg"
+    result[1].should == "AREA:memory_average#0000FF:Memory\\: Avg"
   end
   
   it "should create a graph correctly" do
-    @graph.line RRD_FILE, :memory => :average, :color => "#0000FF", :label => "Memory Avg"
+    @graph.line RRD_FILE, :memory => :average, :color => "#0000FF", :label => "Memory: Avg"
     RRD::Wrapper.should_receive(:graph).with(IMG_FILE,
                                             "--full-size-mode",
                                             "--end", anything(),
@@ -64,7 +64,7 @@ describe RRD::Graph do
                                             "--title", "Title",
                                             "--width", "800",
                                             "DEF:memory_average=#{RRD_FILE}:memory:AVERAGE",
-                                            "LINE1:memory_average#0000FF:Memory Avg").and_return true
+                                            "LINE1:memory_average#0000FF:Memory\\: Avg").and_return true
     @graph.save
   end
   

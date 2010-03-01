@@ -62,20 +62,22 @@ module RRD
     
     def line(rrd_file, options)
       dataset = options.reject {|name, value| GRAPH_OPTIONS.include?(name.to_sym)}
+      label = options[:label].gsub(/^:/, "\\:").gsub(/([^\\]):/, "\\1\\:") # Escape all non-escaped ':'
       name = "#{dataset.keys.first}_#{dataset.values.first.to_s}"
       definition = "DEF:#{name}=#{rrd_file}:#{dataset.keys.first}:#{dataset.values.first.to_s.upcase}"
       definitions << definition
-      printable = "LINE1:#{name}#{options[:color]}:#{options[:label]}"
+      printable = "LINE1:#{name}#{options[:color]}:#{label}"
       printables << printable
       [definition, printable]
     end
     
     def area(rrd_file, options)
       dataset = options.reject {|name, value| GRAPH_OPTIONS.include?(name.to_sym)}
+      label = options[:label].gsub(/^:/, "\\:").gsub(/([^\\]):/, "\\1\\:") # Escape all non-escaped ':'
       name = "#{dataset.keys.first}_#{dataset.values.first.to_s}"
       definition = "DEF:#{name}=#{rrd_file}:#{dataset.keys.first}:#{dataset.values.first.to_s.upcase}"
       definitions << definition
-      printable = "AREA:#{name}#{options[:color]}:#{options[:label]}"
+      printable = "AREA:#{name}#{options[:color]}:#{label}"
       printables << printable
       [definition, printable]
     end
@@ -91,6 +93,7 @@ module RRD
     
     private
     def draw(type, options)
+      options[:label] = options[:label].gsub(/^:/, "\\:").gsub(/([^\\]):/, "\\1\\:") # Escape all non-escaped ':'
       printable = "#{type}:#{options[:data]}#{options[:color]}:#{options[:label]}"
       printables << printable
       printable

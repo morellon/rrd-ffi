@@ -1,5 +1,11 @@
 = Changelog
 
+== TODO: version 0.2.2
+
+* TODO: bang methods to base
+* TODO: Improve documentation
+* TODO: add more rrd functions (dump, tune, xport, resize)
+
 == 2010-03-01 version 0.2.1
 
 * Added bang methods to wrapper

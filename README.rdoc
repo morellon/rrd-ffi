@@ -4,7 +4,9 @@ rrd-ffi is a gem for using rrd actions in your ruby code.
 
 You may use it in the raw format, as many rrd libs in languages like perl or python, or you can use it through the dsl we provide.
 
-rrd-ffi uses ffi to wrap the librrd C bindings, not system calls
+rrd-ffi uses ffi to wrap the librrd C bindings, not system calls.
+
+IMPORTANT: You need librrd installed in your system for this gem to work
 
 = Basics 
 

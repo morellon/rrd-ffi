@@ -57,8 +57,10 @@ module RRD
     alias :last :ends_at
   
     # See RRD::Wrapper.restore
-    def restore(xml_file)
-      Wrapper.restore(xml_file, rrd_file)
+    def restore(xml_file, options = {})
+      line_params = []
+      line_params << "--force-overwrite" if options[:overwrite]
+      Wrapper.restore(xml_file, rrd_file, *line_params)
     end
     
   end

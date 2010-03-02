@@ -159,6 +159,13 @@ module RRD
         date
       end
       
+      # Get the last entered data.
+      # 
+      # Returns an array of 2 arrays (one with datasource names and other with the values):
+      #
+      #   [["time"    , "cpu", "memory"],
+      #    [1266933900, "0.9", "253"   ]]
+      # 
       def last_update(file)
         update_time_ptr = empty_pointer
         ds_count_ptr = empty_pointer
@@ -200,10 +207,12 @@ module RRD
         rrd_update(args.size+1, argv) == 0
       end
       
+      # Returns the error happened.
       def error
         rrd_get_error
       end
       
+      # Clear the error message.
       def clear_error
         rrd_clear_error
       end
@@ -211,16 +220,7 @@ module RRD
       def methods
         super + BANG_METHODS
       end
-=begin
-      def respond_to?(method, include_private = false)
-        super || BANG_METHODS.include?(method.to_sym)
-      end   
-        
-      def method_missing(method, *args)
-        return bang($1, *args) if method.to_s =~ /^(.+)!$/ && BANG_METHODS.include?(method.to_sym)
-        super
-      end
-=end
+
       def bang(method, *args, &block)
         result = send(method, *args, &block)
         raise error unless result

@@ -93,29 +93,44 @@ Mac: <tt>port install rrdtool</tt>
 
 Normal methods return false on error, or the expected result otherwise.
 
-Bang methods raise exception on error.
-
-  # Restoring a rrd file from xml
-  RRD::Wrapper.restore "myrrd.xml", "myrrd.rrd"
-
-  # Creating a rrd file
+	# Creating a rrd file
   RRD::Wrapper.create "myrrd.rrd", "--step", "300", "DS:ifOutOctets:COUNTER:1800:0:4294967295", "RRA:AVERAGE:0.5:1:2016"
-  
-  # Updating rrd with a new value
-  RRD::Wrapper.update "myrrd.rrd", "N:500000000"
 
 	# Fetching average data
   RRD::Wrapper.fetch "myrrd.rrd", "AVERAGE"
 
-	# Looking for the first and last entered dates 
+	# Looking for the first entered dates 
   RRD::Wrapper.first "myrrd.rrd"
-  RRD::Wrapper.last "myrrd.rrd"
 
-  # Creating a graph
+	# Creating a graph
   RRD::Wrapper.graph("graph.png", "DEF:data=myrrd.rrd:ifOutOctets:AVERAGE", "LINE1:data#0000FF:Output bytes")
+
+	# Getting info on a rrd file
+  RRD::Wrapper.info("myrrd.rrd")
+
+  # Looking for the last entered dates 
+	RRD::Wrapper.last "myrrd.rrd"
+	
+	# Getting last data inserted on a rrd 
+	RRD::Wrapper.last_update "myrrd.rrd"
+	
+	# Resizing a rrd file RRA
+  RRD::Wrapper.resize "myrrd.rrd", "0", "GROW", "10"
+	
+  # Restoring a rrd file from xml
+  RRD::Wrapper.restore "myrrd.xml", "myrrd.rrd"
+
+	# Tuning a rrd file
+  RRD::Wrapper.tune "myrrd.rrd", "--minimum", "memory:5"
+  
+  # Updating rrd with a new value
+  RRD::Wrapper.update "myrrd.rrd", "N:500000000"
+
 
   # Getting the error happened
   puts RRD::Wrapper.error
+
+Bang methods raise exception on error.
 
   # Throwing the error if happens
   RRD::Wrapper.fetch! "myrrd.rrd", "WRONG FUNCTION"

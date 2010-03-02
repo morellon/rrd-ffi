@@ -9,6 +9,7 @@
 
 == ? version 0.2.2
 
+* Added graph! to RRD
 * Added bang methods to base
 * Added dump, last_update methods to RRD::Base instance (TODO: tune, resize)
 * Added dump, tune, resize, last_update methods to RRD::Wrapper

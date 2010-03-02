@@ -84,17 +84,17 @@ module RRD
       super + BANG_METHODS
     end
     
-    def bang(method, *args)
-      result = send(method, *args)
+    def bang(method, *args, &block)
+      result = send(method, *args, &block)
       raise error unless result
       result
     end
  
     # Defining all bang methods
     BANG_METHODS.each do |bang_method|
-      define_method(bang_method) do |*args|
+      define_method(bang_method) do |*args, &block|
         method = bang_method.to_s.match(/^(.+)!$/)[1]
-        bang(method, *args)
+        bang(method, *args, &block)
       end
     end
     

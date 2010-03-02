@@ -45,6 +45,17 @@ describe RRD::Base do
     @rrd.restore(XML_FILE, :force_overwrite => true).should be_true
   end
   
+  it "should return the last update made" do
+    RRD::Wrapper.should_receive(:last_update).with(RRD_FILE).and_return([])
+    @rrd.last_update
+  end
+  
+  it "should dump the binary rrd to xml" do
+    xml_file = "new_xml"
+    RRD::Wrapper.should_receive(:dump).with(RRD_FILE, xml_file, "--no-header").and_return(true)
+    @rrd.dump(xml_file, :no_header => true).should be_true
+  end
+  
   it "should return the starting date" do
     RRD::Wrapper.should_receive(:first).with(RRD_FILE).and_return(Time.now.to_i)
     @rrd.starts_at.should be_a(Time)
@@ -61,6 +72,41 @@ describe RRD::Base do
     @rrd.error.should_not be_empty
   end
   
-  it "should respond to first"
-  it "should respond to last"
+  it "should have an alias to starts_at as first" do
+    RRD::Wrapper.should_receive(:first).twice.with(RRD_FILE).and_return(Time.now.to_i)
+    @rrd.first.should == @rrd.starts_at
+  end
+  
+  it "should have an alias to ends_at as last" do
+    RRD::Wrapper.should_receive(:last).twice.with(RRD_FILE).and_return(Time.now.to_i)
+    @rrd.last.should == @rrd.ends_at
+  end
+  
+  context "when using bang methods" do
+    it "should have the normal method" do
+      RRD::Base::BANG_METHODS.each do |bang_method|
+        method = bang_method.to_s.match(/^(.+)!$/)[1]
+        @rrd.respond_to?(method).should be_true
+      end
+    end
+    
+    it "should list them" do
+      (@rrd.methods & RRD::Base::BANG_METHODS).should == RRD::Base::BANG_METHODS
+    end
+    
+    it "should return the normal method result" do
+      @rrd.restore!(XML_FILE).should be_true
+    end
+    
+    it "should raise error if the normal method is not bangable" do
+      @rrd.should_not_receive(:bang)
+      lambda{@rrd.error!}.should raise_error(NoMethodError)
+    end
+    
+    it "should raise error if the normal method result is false" do
+      @rrd.should_receive(:info).and_return(false)
+      @rrd.should_receive(:error).and_return("error message")
+      lambda{@rrd.bang(:info)}.should raise_error("error message")
+    end
+  end
 end

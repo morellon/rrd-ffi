@@ -159,7 +159,7 @@ module RRD
         date
       end
       
-      def lastupdate(file)
+      def last_update(file)
         update_time_ptr = empty_pointer
         ds_count_ptr = empty_pointer
         ds_names_ptr = empty_pointer
@@ -230,8 +230,8 @@ module RRD
       # Defining all bang methods
       BANG_METHODS.each do |bang_method|
         define_method(bang_method) do |*args|
-          bang_method.to_s =~ /^(.+)!$/
-          bang($1, *args)
+          method = bang_method.to_s.match(/^(.+)!$/)[1]
+          bang(method, *args)
         end
       end
    

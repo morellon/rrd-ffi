@@ -71,7 +71,7 @@ describe RRD::Wrapper do
     end
     
     it "should return the last entered values" do
-      result = RRD::Wrapper.lastupdate(RRD_FILE)
+      result = RRD::Wrapper.last_update(RRD_FILE)
       result.should have(2).lines
       result[1][0].should == 1266945375
       result[1][1].should == 1088.2073
@@ -115,6 +115,13 @@ describe RRD::Wrapper do
       end
     end
     
+    it "should have the normal method" do
+      RRD::Wrapper::BANG_METHODS.each do |bang_method|
+        method = bang_method.to_s.match(/^(.+)!$/)[1]
+        RRD::Wrapper.respond_to?(method).should be_true
+      end
+    end
+    
     it "should list them" do
       (RRD::Wrapper.methods & RRD::Wrapper::BANG_METHODS).should == RRD::Wrapper::BANG_METHODS
     end
@@ -125,7 +132,7 @@ describe RRD::Wrapper do
     
     it "should raise error if the normal method is not bangable" do
       RRD::Wrapper.should_not_receive(:bang)
-      lambda{RRD::Wrapper.not_bangable}.should raise_error(NoMethodError)
+      lambda{RRD::Wrapper.error!}.should raise_error(NoMethodError)
     end
     
     it "should raise error if the normal method result is false" do

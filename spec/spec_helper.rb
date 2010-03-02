@@ -10,7 +10,7 @@ XML_FILE = File.expand_path(File.dirname(__FILE__) + "/vm.xml")
 $VERBOSE = false
 
 Spec::Runner.configure do |config|
-  config.append_before :each do    
+  config.append_before :each do
     [RRD_FILE, IMG_FILE].each{|file| FileUtils.rm file rescue nil}
   end
   

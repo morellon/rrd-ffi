@@ -64,6 +64,7 @@ module RRD
       dataset = options.reject {|name, value| GRAPH_OPTIONS.include?(name.to_sym)}
       name = "#{dataset.keys.first}_#{dataset.values.first.to_s}"
       options = {:data => name}.merge(options)
+      
       definition = for_rrd_data name, {:from => rrd_file}.merge(dataset)
       printable = draw_line options
       [definition, printable]
@@ -73,6 +74,7 @@ module RRD
       dataset = options.reject {|name, value| GRAPH_OPTIONS.include?(name.to_sym)}
       name = "#{dataset.keys.first}_#{dataset.values.first.to_s}"
       options = {:data => name}.merge(options)
+      
       definition = for_rrd_data name, {:from => rrd_file}.merge(dataset)
       printable = draw_area options
       [definition, printable]

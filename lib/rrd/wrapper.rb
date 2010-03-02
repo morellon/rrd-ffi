@@ -46,6 +46,7 @@ module RRD
       attach_function :rrd_tune, [:int, :pointer], :int
       attach_function :rrd_resize, [:int, :pointer], :int
       attach_function :rrd_dump, [:int, :pointer], :int
+      attach_function :rrd_lastupdate_r, [:string, :pointer, :pointer, :pointer, :pointer], :int
       attach_function :rrd_info, [:int, :pointer], :pointer
       attach_function :rrd_fetch, [:int, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer], :int
       attach_function :rrd_first, [:int, :pointer], :time_t
@@ -98,8 +99,7 @@ module RRD
         ds_names = ds_names_ptr.get_pointer(0).get_array_of_string(0, ds_count)
         values = values_ptr.get_pointer(0).get_array_of_double(0, result_lines * ds_count)
         
-        result = []
-        result << ["time"] + ds_names
+        result = [["time"] + ds_names]
         (0..result_lines-1).each do |line|
           date = start_time + line*step
           first = ds_count*line
@@ -146,6 +146,22 @@ module RRD
         date = rrd_last(args.size+1, argv)
         return false if date == -1
         date
+      end
+      
+      def lastupdate(file)
+        update_time_ptr = empty_pointer
+        ds_count_ptr = empty_pointer
+        ds_names_ptr = empty_pointer
+        values_ptr = FFI::MemoryPointer.new(:pointer)
+        
+        return false if rrd_lastupdate_r(file, update_time_ptr, ds_count_ptr, ds_names_ptr, values_ptr) == -1
+        update_time = update_time_ptr.get_ulong(0)
+        ds_count = ds_count_ptr.get_ulong(0)
+        ds_names = ds_names_ptr.get_pointer(0).get_array_of_string(0, ds_count)
+        values = values_ptr.get_pointer(0).get_array_of_string(0, ds_count)
+        values = values.map {|item| item.include?(".")? item.to_f : item.to_i} # Converting string to numeric
+
+        [["time"] + ds_names, [update_time]+values]
       end
       
       # Restore an RRD in XML format to a binary RRD.

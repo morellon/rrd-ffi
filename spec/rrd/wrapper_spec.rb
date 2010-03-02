@@ -70,6 +70,13 @@ describe RRD::Wrapper do
       RRD::Wrapper.last(RRD_FILE).should == 1266945375
     end
     
+    it "should return the last entered values" do
+      result = RRD::Wrapper.lastupdate(RRD_FILE)
+      result.should have(2).lines
+      result[1][0].should == 1266945375
+      result[1][1].should == 1088.2073
+    end
+    
     it "should create a graph correctly" do
       RRD::Wrapper.graph(IMG_FILE, "--width", "1000", "--height", "300", "DEF:data=#{RRD_FILE}:memory:AVERAGE", "LINE1:data#0000FF:Memory Avg", "--full-size-mode")
       File.should be_file(IMG_FILE)

@@ -62,23 +62,19 @@ module RRD
     
     def line(rrd_file, options)
       dataset = options.reject {|name, value| GRAPH_OPTIONS.include?(name.to_sym)}
-      label = options[:label].gsub(/^:/, "\\:").gsub(/([^\\]):/, "\\1\\:") # Escape all non-escaped ':'
       name = "#{dataset.keys.first}_#{dataset.values.first.to_s}"
-      definition = "DEF:#{name}=#{rrd_file}:#{dataset.keys.first}:#{dataset.values.first.to_s.upcase}"
-      definitions << definition
-      printable = "LINE1:#{name}#{options[:color]}:#{label}"
-      printables << printable
+      options = {:data => name}.merge(options)
+      definition = for_rrd_data name, {:from => rrd_file}.merge(dataset)
+      printable = draw_line options
       [definition, printable]
     end
     
     def area(rrd_file, options)
       dataset = options.reject {|name, value| GRAPH_OPTIONS.include?(name.to_sym)}
-      label = options[:label].gsub(/^:/, "\\:").gsub(/([^\\]):/, "\\1\\:") # Escape all non-escaped ':'
       name = "#{dataset.keys.first}_#{dataset.values.first.to_s}"
-      definition = "DEF:#{name}=#{rrd_file}:#{dataset.keys.first}:#{dataset.values.first.to_s.upcase}"
-      definitions << definition
-      printable = "AREA:#{name}#{options[:color]}:#{label}"
-      printables << printable
+      options = {:data => name}.merge(options)
+      definition = for_rrd_data name, {:from => rrd_file}.merge(dataset)
+      printable = draw_area options
       [definition, printable]
     end
     

@@ -5,7 +5,7 @@ module RRD
   class Wrapper
     
     INFO_TYPE = { 0 => :u_val, 1 => :u_cnt, 2 => :u_str, 3 => :u_int, 4 => :u_blob}
-    BANG_METHODS = [:info!, :fetch!, :first!, :last!, :restore!, :graph!, :create!, :update!]
+    BANG_METHODS = [:info!, :fetch!, :first!, :last!, :restore!, :graph!, :create!, :update!, :tune!, :resize!, :dump!]
     
     def self.detect_rrd_lib
       if defined?(RRD_LIB)
@@ -43,6 +43,9 @@ module RRD
       ffi_lib RRD::Wrapper.detect_rrd_lib
       attach_function :rrd_create, [:int, :pointer], :int
       attach_function :rrd_update, [:int, :pointer], :int
+      attach_function :rrd_tune, [:int, :pointer], :int
+      attach_function :rrd_resize, [:int, :pointer], :int
+      attach_function :rrd_dump, [:int, :pointer], :int
       attach_function :rrd_info, [:int, :pointer], :pointer
       attach_function :rrd_fetch, [:int, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer], :int
       attach_function :rrd_first, [:int, :pointer], :time_t
@@ -149,6 +152,25 @@ module RRD
       def restore(*args)
         argv = to_pointer(["restore"] + args)
         rrd_restore(args.size+1, argv) == 0
+      end
+      
+      # Dump a binary RRD to an RRD in XML format.
+      def dump(*args)
+        argv = to_pointer(["dump"] + args)
+        rrd_dump(args.size+1, argv) == 0
+      end
+      
+      # Allows you to alter some of the basic configuration values
+      # stored in the header area of a Round Robin Database.
+      def tune(*args)
+        argv = to_pointer(["tune"] + args)
+        rrd_tune(args.size+1, argv) == 0
+      end
+      
+      # Used to modify the number of rows in an RRA
+      def resize(*args)
+        argv = to_pointer(["resize"] + args)
+        rrd_resize(args.size+1, argv) == 0
       end
       
       # Create a graph from data stored in one or several RRDs.

@@ -75,6 +75,24 @@ describe RRD::Wrapper do
       File.should be_file(IMG_FILE)
     end
     
+    it "should tune rrd" do
+      RRD::Wrapper.tune(RRD_FILE, "--minimum", "memory:5").should be_true
+    end
+    
+    it "should resize rrd" do
+      RRD::Wrapper.resize(RRD_FILE, "0", "GROW", "10").should be_true
+    end
+    
+    it "should dump rrd binary to xml" do
+      new_xml = XML_FILE+"new"
+      FileUtils.rm new_xml rescue nil
+      
+      RRD::Wrapper.dump(RRD_FILE, new_xml).should be_true
+      File.should be_file(new_xml)
+      
+      FileUtils.rm new_xml rescue nil
+    end
+    
     it "should return the error correctly, cleaning the error var" do
       RRD::Wrapper.error.should be_empty
       RRD::Wrapper.fetch("error").should be_false

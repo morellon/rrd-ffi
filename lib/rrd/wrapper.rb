@@ -5,7 +5,7 @@ module RRD
   class Wrapper
     
     INFO_TYPE = { 0 => :u_val, 1 => :u_cnt, 2 => :u_str, 3 => :u_int, 4 => :u_blob}
-    BANG_METHODS = [:info!, :fetch!, :first!, :last!, :restore!, :graph!, :create!, :update!, :tune!, :resize!, :dump!]
+    BANG_METHODS = [:create!, :dump!, :fetch!, :first!, :graph!, :info!, :last!, :last_update!, :resize!, :restore!, :tune!, :update!]
     
     def self.detect_rrd_lib
       if defined?(RRD_LIB)
@@ -42,17 +42,18 @@ module RRD
 
       ffi_lib RRD::Wrapper.detect_rrd_lib
       attach_function :rrd_create, [:int, :pointer], :int
-      attach_function :rrd_update, [:int, :pointer], :int
-      attach_function :rrd_tune, [:int, :pointer], :int
-      attach_function :rrd_resize, [:int, :pointer], :int
       attach_function :rrd_dump, [:int, :pointer], :int
-      attach_function :rrd_lastupdate_r, [:string, :pointer, :pointer, :pointer, :pointer], :int
-      attach_function :rrd_info, [:int, :pointer], :pointer
       attach_function :rrd_fetch, [:int, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer], :int
       attach_function :rrd_first, [:int, :pointer], :time_t
-      attach_function :rrd_last, [:int, :pointer], :time_t
-      attach_function :rrd_restore, [:int, :pointer], :int
       attach_function :rrd_graph, [:int, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer], :int
+      attach_function :rrd_info, [:int, :pointer], :pointer
+      attach_function :rrd_last, [:int, :pointer], :time_t
+      attach_function :rrd_lastupdate_r, [:string, :pointer, :pointer, :pointer, :pointer], :int
+      attach_function :rrd_resize, [:int, :pointer], :int
+      attach_function :rrd_restore, [:int, :pointer], :int
+      attach_function :rrd_tune, [:int, :pointer], :int
+      attach_function :rrd_update, [:int, :pointer], :int
+            
       attach_function :rrd_get_error, [], :string
       attach_function :rrd_clear_error, [], :void
       
@@ -62,13 +63,13 @@ module RRD
         rrd_create(args.size+1, argv) == 0
         true
       end
-
-      # Store new data values into an RRD.
-      def update(*args)
-        argv = to_pointer(["update"] + args)
-        rrd_update(args.size+1, argv) == 0
+      
+      # Dump a binary RRD to an RRD in XML format.
+      def dump(*args)
+        argv = to_pointer(["dump"] + args)
+        rrd_dump(args.size+1, argv) == 0
       end
-
+      
       # Get data for a certain time period from a RRD.
       # 
       # Returns an array of arrays (which contains the date and values for all datasources):
@@ -110,6 +111,26 @@ module RRD
         result
       end
       
+      # Find the first update time of an RRD.
+      #  
+      # Returns an integer unix time
+      def first(*args)
+        argv = to_pointer(["first"] + args)
+        date = rrd_first(args.size+1, argv)
+        return false if date == -1
+        date
+      end
+      
+      # Create a graph from data stored in one or several RRDs.
+      def graph(*args)
+        argv = to_pointer(["graph"] + args)
+        xsize_ptr = empty_pointer
+        ysize_ptr = empty_pointer
+        ymin_ptr = empty_pointer
+        ymax_ptr = empty_pointer
+        rrd_graph(args.size+1, argv, empty_pointer, xsize_ptr, ysize_ptr, empty_pointer, ymin_ptr, ymax_ptr) == 0
+      end
+      
       # Get information about an RRD.
       # 
       # Returns a hash with the information
@@ -126,16 +147,6 @@ module RRD
         
         return false if info.empty?
         info
-      end
-      
-      # Find the first update time of an RRD.
-      #  
-      # Returns an integer unix time
-      def first(*args)
-        argv = to_pointer(["first"] + args)
-        date = rrd_first(args.size+1, argv)
-        return false if date == -1
-        date
       end
       
       # Find the last update time of an RRD.
@@ -164,16 +175,16 @@ module RRD
         [["time"] + ds_names, [update_time]+values]
       end
       
+      # Used to modify the number of rows in an RRA
+      def resize(*args)
+        argv = to_pointer(["resize"] + args)
+        rrd_resize(args.size+1, argv) == 0
+      end
+
       # Restore an RRD in XML format to a binary RRD.
       def restore(*args)
         argv = to_pointer(["restore"] + args)
         rrd_restore(args.size+1, argv) == 0
-      end
-      
-      # Dump a binary RRD to an RRD in XML format.
-      def dump(*args)
-        argv = to_pointer(["dump"] + args)
-        rrd_dump(args.size+1, argv) == 0
       end
       
       # Allows you to alter some of the basic configuration values
@@ -183,22 +194,12 @@ module RRD
         rrd_tune(args.size+1, argv) == 0
       end
       
-      # Used to modify the number of rows in an RRA
-      def resize(*args)
-        argv = to_pointer(["resize"] + args)
-        rrd_resize(args.size+1, argv) == 0
+      # Store new data values into an RRD.
+      def update(*args)
+        argv = to_pointer(["update"] + args)
+        rrd_update(args.size+1, argv) == 0
       end
       
-      # Create a graph from data stored in one or several RRDs.
-      def graph(*args)
-        argv = to_pointer(["graph"] + args)
-        xsize_ptr = empty_pointer
-        ysize_ptr = empty_pointer
-        ymin_ptr = empty_pointer
-        ymax_ptr = empty_pointer
-        rrd_graph(args.size+1, argv, empty_pointer, xsize_ptr, ysize_ptr, empty_pointer, ymin_ptr, ymax_ptr) == 0
-      end
-
       def error
         rrd_get_error
       end
@@ -210,7 +211,7 @@ module RRD
       def methods
         super + BANG_METHODS
       end
-
+=begin
       def respond_to?(method, include_private = false)
         super || BANG_METHODS.include?(method.to_sym)
       end   
@@ -219,11 +220,19 @@ module RRD
         return bang($1, *args) if method.to_s =~ /^(.+)!$/ && BANG_METHODS.include?(method.to_sym)
         super
       end
-      
+=end
       def bang(method, *args)
         result = send(method, *args)
         raise error unless result
         result
+      end
+   
+      # Defining all bang methods
+      BANG_METHODS.each do |bang_method|
+        define_method(bang_method) do |*args|
+          bang_method.to_s =~ /^(.+)!$/
+          bang($1, *args)
+        end
       end
    
       private

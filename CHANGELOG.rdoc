@@ -3,6 +3,7 @@
 == FUTURE:
 
 * TODO: Validations
+* TODO: Better error messages
 * TODO: Improve documentation
 * TODO: add more rrd functions (xport). Any other missing?
 

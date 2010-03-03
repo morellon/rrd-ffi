@@ -175,7 +175,7 @@ module RRD
       #    [1266933900, "0.9", "253"   ]]
       # 
       def last_update(file)
-        raise "Please upgrade your rrdtool version before using last_updae method" unless respond_to?(:rrd_lastupdate_r)
+        raise "Please upgrade your rrdtool version before using last_update method" unless respond_to?(:rrd_lastupdate_r)
         update_time_ptr = empty_pointer
         ds_count_ptr = empty_pointer
         ds_names_ptr = empty_pointer

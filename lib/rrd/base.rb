@@ -16,6 +16,11 @@ module RRD
       Wrapper.error
     end
     
+    # Creates a rrd file. Basic usage:
+    #  rrd.create :start => Time.now - 10.seconds, :step => 5.minutes do
+    #    datasource "memory", :type => :gauge, :heartbeat => 10.minutes, :min => 0, :max => :unlimited
+    #    archive :average, :every => 10.minutes, :during => 1.year
+    #  end
     def create(options = {}, &block)
       builder = RRD::Builder.new(rrd_file, options)
       builder.instance_eval(&block)
@@ -57,6 +62,10 @@ module RRD
     end
     
     # Writes a new file 'resize.rrd'
+    # 
+    # You will need to know the RRA number, starting from 0:
+    #
+    #  rrd.resize(0, :grow => 10.days)
     def resize(rra_num, options)
       info = self.info
       step = info["step"]

@@ -63,6 +63,11 @@ From source:
   # Looking for the first and last entered dates 
   puts rrd.starts_at
   puts rrd.ends_at
+  
+  # Growing or Shrinking a rrd_file (create a resize.rrd file)
+  # You need to know the RRA number (starting from 0)
+  rrd.resize(0, :grow => 10.days)
+  rrd.resize(0, :shrink => 10.days)
 
   # Error handling
   rrd.fetch(:unknown_function) # should return false

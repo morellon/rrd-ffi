@@ -173,6 +173,7 @@ module RRD
       #    [1266933900, "0.9", "253"   ]]
       # 
       def last_update(file)
+        raise "Please upgrade your rrdtool version before using last_updae method" unless respond_to?(:rrd_lastupdate_r)
         update_time_ptr = empty_pointer
         ds_count_ptr = empty_pointer
         ds_names_ptr = empty_pointer
@@ -186,7 +187,7 @@ module RRD
         values = values.map {|item| item.include?(".")? item.to_f : item.to_i} # Converting string to numeric
 
         [["time"] + ds_names, [update_time]+values]
-      end if respond_to?(:rrd_lastupdate_r)
+      end
       
       # Used to modify the number of rows in an RRA
       def resize(*args)

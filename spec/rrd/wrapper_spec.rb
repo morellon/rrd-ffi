@@ -71,7 +71,7 @@ describe RRD::Wrapper do
     end
     
     it "should return the last entered values" do
-      pending unless RRD::Wrapper.respond_to?(:last_update)
+      pending unless RRD::Wrapper.respond_to?(:rrd_lastupdate_r)
       result = RRD::Wrapper.last_update(RRD_FILE)
       result.should have(2).lines
       result[1][0].should == 1266945375

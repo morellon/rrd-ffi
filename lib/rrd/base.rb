@@ -56,6 +56,16 @@ module RRD
       Wrapper.last_update(rrd_file)
     end
     
+    # Writes a new file 'resize.rrd'
+    def resize(rra_num, options)
+      info = self.info
+      step = info["step"]
+      rra_step = info["rra[#{rra_num}].pdp_per_row"]
+      action = options.keys.first.to_s.upcase
+      delta = (options.values.first / (step * rra_step)).to_i # Force an integer
+      Wrapper.resize(rrd_file, rra_num.to_s, action, delta.to_s)
+    end
+    
     # See RRD::Wrapper.restore
     def restore(xml_file, options = {})
       options = options.clone

@@ -6,7 +6,7 @@ You may use it in the raw format, as many rrd libs in languages like perl or pyt
 
 rrd-ffi uses ffi to wrap the librrd C bindings, not system calls.
 
-IMPORTANT: You need librrd installed in your system for this gem to work
+IMPORTANT: You need librrd installed (version 1.3.1 or above) in your system for this gem to work
 
 = Basics 
 
@@ -28,7 +28,7 @@ or
 
   export LD_LIBRARY_PATH=/opt/local/lib
 
-If you are not using MAC OS and still have problems, export the RRD_PATH variable with the path to your librrd file.
+If you are not using MAC OS and still having problems, export the RRD_PATH variable with the path to your librrd file.
 
 === Installing librrd
 
@@ -37,6 +37,12 @@ Debian/Ubuntu: <tt>apt-get install librrd-dev</tt>
 Fedora/Red Hat: <tt>yum install rrdtool-devel</tt>
 
 Mac: <tt>port install rrdtool</tt>
+
+From source:
+  cd rrdtool-${rrdtool_version}
+  ./configure --disable-ruby --prefix=/usr/local
+  make
+  make install
 
 == Example Usage
   require "rrd"

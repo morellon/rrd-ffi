@@ -56,6 +56,12 @@ describe RRD::Base do
     @rrd.restore(XML_FILE, :force_overwrite => true).should be_true
   end
   
+  it "should resize a RRA from rrd file" do
+    RRD::Wrapper.should_receive(:info).and_return({"step" => 5, "rra[1].pdp_per_row" => 12}) # step of 1 minute on RRA
+    RRD::Wrapper.should_receive(:resize).with(RRD_FILE, "1", "GROW", "60").and_return(true)
+    @rrd.resize(1, :grow => 1.hour)
+  end
+  
   it "should return the last update made" do
     RRD::Wrapper.should_receive(:last_update).with(RRD_FILE).and_return([])
     @rrd.last_update

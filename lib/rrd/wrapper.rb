@@ -48,7 +48,13 @@ module RRD
       attach_function :rrd_graph, [:int, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer], :int
       attach_function :rrd_info, [:int, :pointer], :pointer
       attach_function :rrd_last, [:int, :pointer], :time_t
-      attach_function :rrd_lastupdate_r, [:string, :pointer, :pointer, :pointer, :pointer], :int
+      
+      begin
+        attach_function :rrd_lastupdate_r, [:string, :pointer, :pointer, :pointer, :pointer], :int
+      rescue Exception => e
+        puts "Please upgrade your rrdtool version to use last_update method"
+      end
+        
       attach_function :rrd_resize, [:int, :pointer], :int
       attach_function :rrd_restore, [:int, :pointer], :int
       attach_function :rrd_tune, [:int, :pointer], :int
@@ -180,7 +186,7 @@ module RRD
         values = values.map {|item| item.include?(".")? item.to_f : item.to_i} # Converting string to numeric
 
         [["time"] + ds_names, [update_time]+values]
-      end
+      end if respond_to?(:rrd_lastupdate_r)
       
       # Used to modify the number of rows in an RRA
       def resize(*args)

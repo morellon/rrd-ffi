@@ -51,11 +51,10 @@ module RRD
       attach_function :rrd_info, [:int, :pointer], :pointer
       attach_function :rrd_last, [:int, :pointer], :time_t
       
-      if rrd_strversion >= "1.4"
+      begin
         attach_function :rrd_lastupdate_r, [:string, :pointer, :pointer, :pointer, :pointer], :int
-        alias :rrd_lastupdate :rrd_lastupdate_r
-      else
-        attach_function :rrd_lastupdate, [:string, :pointer, :pointer, :pointer, :pointer], :int
+      rescue Exception => e
+        puts "Please upgrade your rrdtool version to use last_update method"
       end
         
       attach_function :rrd_resize, [:int, :pointer], :int
@@ -176,12 +175,13 @@ module RRD
       #    [1266933900, "0.9", "253"   ]]
       # 
       def last_update(file)
+        raise "Please upgrade your rrdtool version before using last_updae method" unless respond_to?(:rrd_lastupdate_r)
         update_time_ptr = empty_pointer
         ds_count_ptr = empty_pointer
         ds_names_ptr = empty_pointer
         values_ptr = FFI::MemoryPointer.new(:pointer)
         
-        return false if rrd_lastupdate(file, update_time_ptr, ds_count_ptr, ds_names_ptr, values_ptr) == -1
+        return false if rrd_lastupdate_r(file, update_time_ptr, ds_count_ptr, ds_names_ptr, values_ptr) == -1
         update_time = update_time_ptr.get_ulong(0)
         ds_count = ds_count_ptr.get_ulong(0)
         ds_names = ds_names_ptr.get_pointer(0).get_array_of_string(0, ds_count)

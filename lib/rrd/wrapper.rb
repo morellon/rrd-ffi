@@ -65,11 +65,13 @@ module RRD
       attach_function :rrd_get_error, [], :string
       attach_function :rrd_clear_error, [], :void
       
+      attach_function :rrd_info_free, [:pointer], :void
+      attach_function :rrd_freemem, [:pointer], :void
+      
       # Set up a new Round Robin Database (RRD).
       def create(*args)
         argv = to_pointer(["create"] + args)
         rrd_create(args.size+1, argv) == 0
-        true
       end
       
       # Dump a binary RRD to an RRD in XML format.
@@ -93,8 +95,8 @@ module RRD
         step_ptr = empty_pointer
         ds_count_ptr = empty_pointer
         ds_names_ptr = empty_pointer
+        values_ptr = empty_pointer
         
-        values_ptr = FFI::MemoryPointer.new(:pointer)
         argv = to_pointer(["fetch"] + args)
         return false unless rrd_fetch(args.size+1, argv, start_time_ptr, end_time_ptr, step_ptr, ds_count_ptr, ds_names_ptr, values_ptr) == 0
         
@@ -116,6 +118,8 @@ module RRD
           result << [date] + values[first..last]
         end
         
+        free_in_rrd(values_ptr.read_pointer, ds_names_ptr.read_pointer)
+        
         result
       end
       
@@ -132,11 +136,17 @@ module RRD
       # Create a graph from data stored in one or several RRDs.
       def graph(*args)
         argv = to_pointer(["graph"] + args)
+        unused1_ptr = empty_pointer
         xsize_ptr = empty_pointer
         ysize_ptr = empty_pointer
+        unused2_ptr = empty_pointer
         ymin_ptr = empty_pointer
         ymax_ptr = empty_pointer
-        rrd_graph(args.size+1, argv, empty_pointer, xsize_ptr, ysize_ptr, empty_pointer, ymin_ptr, ymax_ptr) == 0
+        result = rrd_graph(args.size+1, argv, unused1_ptr, xsize_ptr, ysize_ptr, unused2_ptr, ymin_ptr, ymax_ptr) == 0
+        
+        free_in_rrd(unused1_ptr.read_pointer, unused2_ptr.read_pointer)
+        
+        result
       end
       
       # Get information about an RRD.
@@ -144,14 +154,16 @@ module RRD
       # Returns a hash with the information
       def info(*args)
         argv = to_pointer(["info"] + args)
-        result = rrd_info(args.size+1, argv)
+        ptr = result_ptr = rrd_info(args.size+1, argv)
     
         info = {}
-        while result.address != 0
-          item = RRD::Wrapper::RRDInfo.new result
+        while result_ptr.address != 0
+          item = RRD::Wrapper::RRDInfo.new result_ptr
           info[item[:key]] = item[:value][INFO_TYPE[item[:type]].to_sym]
-          result = item[:next]
+          result_ptr = item[:next]
         end
+        
+        rrd_info_free(ptr)
         
         return false if info.empty?
         info
@@ -179,14 +191,16 @@ module RRD
         update_time_ptr = empty_pointer
         ds_count_ptr = empty_pointer
         ds_names_ptr = empty_pointer
-        values_ptr = FFI::MemoryPointer.new(:pointer)
+        values_ptr = empty_pointer
         
         return false if rrd_lastupdate_r(file, update_time_ptr, ds_count_ptr, ds_names_ptr, values_ptr) == -1
         update_time = update_time_ptr.get_ulong(0)
         ds_count = ds_count_ptr.get_ulong(0)
-        ds_names = ds_names_ptr.get_pointer(0).get_array_of_string(0, ds_count)
-        values = values_ptr.get_pointer(0).get_array_of_string(0, ds_count)
+        ds_names = ds_names_ptr.read_pointer.get_array_of_string(0, ds_count)
+        values = values_ptr.read_pointer.get_array_of_string(0, ds_count)
         values = values.map {|item| item.include?(".")? item.to_f : item.to_i} # Converting string to numeric
+
+        free_in_rrd(ds_names_ptr.read_pointer, values_ptr.read_pointer)
 
         [["time"] + ds_names, [update_time]+values]
       end
@@ -248,7 +262,10 @@ module RRD
    
       private
       def empty_pointer
-        FFI::MemoryPointer.new(:pointer)
+        mem_ptrs = []
+        ptr = FFI::MemoryPointer.new(:pointer)
+        mem_ptrs << ptr
+        ptr
       end
 
       # FIXME: remove clear_error from here
@@ -264,6 +281,11 @@ module RRD
 
         argv
       end
+      
+      def free_in_rrd(*pointers)
+        pointers.each{|pointer| rrd_freemem(pointer)}
+      end
+      
     end
   end
 end

@@ -143,4 +143,16 @@ describe RRD::Wrapper do
     end
   end
   
+  def memory_leak(many=30)
+    2.times {GC.start}
+    starting_memory = 0
+    begin
+      many.times {yield}
+    end
+    2.times {GC.start}
+    ending_memory = 0
+    ending_memory - starting_memory == starting_memory * 0.2
+  end
+    
+  
 end

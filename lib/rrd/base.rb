@@ -3,7 +3,7 @@ module RRD
   class Base
     attr_accessor :rrd_file
     
-    BANG_METHODS = [:create!, :dump!, :ends_at!, :fetch!, :first!, :info!, :last!, :last_update!, :restore!, :starts_at!, :update!]
+    BANG_METHODS = [:create!, :dump!, :ends_at!, :fetch!, :first!, :info!, :last!, :last_update!, :resize!, :restore!, :starts_at!, :update!]
     
     RESTORE_FLAGS = [:force_overwrite, :range_check]
     DUMP_FLAGS = [:no_header]

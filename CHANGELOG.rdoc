@@ -9,6 +9,8 @@
 
 == ? version 0.2.2
 
+* Fixed memory leak on RRD::Wrapper (info, graph, last_update, fetch)
+* TODO: Add memory leak test
 * Added graph! to RRD
 * Added bang methods to base
 * Added dump, last_update, resize methods to RRD::Base instance (TODO: tune)

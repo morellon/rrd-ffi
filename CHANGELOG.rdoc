@@ -6,14 +6,15 @@
 * TODO: Better error messages
 * TODO: Improve documentation
 * TODO: add more rrd functions (xport). Any other missing?
+* TODO: Add memory leak test
+* TODO: Add tune methods to RRD::Base instance
 
-== ? version 0.2.2
+== 2010-03-08 version 0.2.2
 
 * Fixed memory leak on RRD::Wrapper (info, graph, last_update, fetch)
-* TODO: Add memory leak test
 * Added graph! to RRD
 * Added bang methods to base
-* Added dump, last_update, resize methods to RRD::Base instance (TODO: tune)
+* Added dump, last_update, resize methods to RRD::Base instance
 * Added dump, tune, resize, last_update methods to RRD::Wrapper
 * Escape ':' on graph label
 * Added flags to be used on RRD::Base instances and for building graphs

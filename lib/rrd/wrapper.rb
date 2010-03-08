@@ -72,12 +72,16 @@ module RRD
       def create(*args)
         argv = to_pointer(["create"] + args)
         rrd_create(args.size+1, argv) == 0
+      ensure
+        free_pointers
       end
       
       # Dump a binary RRD to an RRD in XML format.
       def dump(*args)
         argv = to_pointer(["dump"] + args)
         rrd_dump(args.size+1, argv) == 0
+      ensure
+        free_pointers
       end
       
       # Get data for a certain time period from a RRD.
@@ -118,9 +122,12 @@ module RRD
           result << [date] + values[first..last]
         end
         
+        free_in_rrd(*ds_names_ptr.read_pointer.read_array_of_pointer(ds_count))
         free_in_rrd(values_ptr.read_pointer, ds_names_ptr.read_pointer)
         
         result
+      ensure
+        free_pointers
       end
       
       # Find the first update time of an RRD.
@@ -131,22 +138,26 @@ module RRD
         date = rrd_first(args.size+1, argv)
         return false if date == -1
         date
+      ensure
+        free_pointers
       end
       
       # Create a graph from data stored in one or several RRDs.
       def graph(*args)
         argv = to_pointer(["graph"] + args)
-        unused1_ptr = empty_pointer
+        calcpr_ptr = empty_pointer
         xsize_ptr = empty_pointer
         ysize_ptr = empty_pointer
-        unused2_ptr = empty_pointer
         ymin_ptr = empty_pointer
         ymax_ptr = empty_pointer
-        result = rrd_graph(args.size+1, argv, unused1_ptr, xsize_ptr, ysize_ptr, unused2_ptr, ymin_ptr, ymax_ptr) == 0
+        result = rrd_graph(args.size+1, argv, calcpr_ptr, xsize_ptr, ysize_ptr, nil, ymin_ptr, ymax_ptr) == 0
         
-        free_in_rrd(unused1_ptr.read_pointer, unused2_ptr.read_pointer)
+        # TODO: free array of pointers from calcpr_ptr
+        free_in_rrd(calcpr_ptr.read_pointer)
         
         result
+      ensure
+        free_pointers
       end
       
       # Get information about an RRD.
@@ -167,6 +178,9 @@ module RRD
         
         return false if info.empty?
         info
+        
+      ensure
+        free_pointers
       end
       
       # Find the last update time of an RRD.
@@ -177,6 +191,8 @@ module RRD
         date = rrd_last(args.size+1, argv)
         return false if date == -1
         date
+      ensure
+        free_pointers
       end
       
       # Get the last entered data.
@@ -200,9 +216,13 @@ module RRD
         values = values_ptr.read_pointer.get_array_of_string(0, ds_count)
         values = values.map {|item| item.include?(".")? item.to_f : item.to_i} # Converting string to numeric
 
+        free_in_rrd(*ds_names_ptr.read_pointer.read_array_of_pointer(ds_count))
+        free_in_rrd(*values_ptr.read_pointer.read_array_of_pointer(ds_count))
         free_in_rrd(ds_names_ptr.read_pointer, values_ptr.read_pointer)
 
         [["time"] + ds_names, [update_time]+values]
+      ensure
+        free_pointers
       end
       
       # Used to modify the number of rows in an RRA
@@ -211,12 +231,16 @@ module RRD
       def resize(*args)
         argv = to_pointer(["resize"] + args)
         rrd_resize(args.size+1, argv) == 0
+      ensure
+        free_pointers
       end
 
       # Restore an RRD in XML format to a binary RRD.
       def restore(*args)
         argv = to_pointer(["restore"] + args)
         rrd_restore(args.size+1, argv) == 0
+      ensure
+        free_pointers
       end
       
       # Allows you to alter some of the basic configuration values
@@ -224,12 +248,16 @@ module RRD
       def tune(*args)
         argv = to_pointer(["tune"] + args)
         rrd_tune(args.size+1, argv) == 0
+      ensure
+        free_pointers
       end
       
       # Store new data values into an RRD.
       def update(*args)
         argv = to_pointer(["update"] + args)
         rrd_update(args.size+1, argv) == 0
+      ensure
+        free_pointers
       end
       
       # Returns the error happened.
@@ -262,28 +290,41 @@ module RRD
    
       private
       def empty_pointer
-        mem_ptrs = []
+        @mem_ptrs ||= []
         ptr = FFI::MemoryPointer.new(:pointer)
-        mem_ptrs << ptr
+        @mem_ptrs << ptr
         ptr
       end
 
       # FIXME: remove clear_error from here
       def to_pointer(array_of_strings)
         clear_error
-        strptrs = []
-        array_of_strings.each {|item| strptrs << FFI::MemoryPointer.from_string(item)}
+        @strptrs = []
+        array_of_strings.each {|item| @strptrs << FFI::MemoryPointer.from_string(item)}
 
-        argv = FFI::MemoryPointer.new(:pointer, strptrs.length)
-        strptrs.each_with_index do |p, i|
-          argv[i].put_pointer(0,  p)
+        @argv = FFI::MemoryPointer.new(:pointer, @strptrs.length)
+        @strptrs.each_with_index do |p, i|
+          @argv[i].put_pointer(0,  p)
         end
 
-        argv
+        @argv
       end
       
       def free_in_rrd(*pointers)
         pointers.each{|pointer| rrd_freemem(pointer)}
+      end
+      
+      def free_pointers
+        @strptrs ||= []
+        @mem_ptrs ||= []
+        
+        @strptrs.each{|str_ptr| str_ptr.free}
+        @mem_ptrs.each{|mem_ptr| mem_ptr.free}
+        @argv.free unless @argv.nil?
+        
+        @argv = nil
+        @str_ptrs = nil
+        @mem_ptrs = nil
       end
       
     end

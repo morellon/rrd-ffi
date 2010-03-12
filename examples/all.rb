@@ -42,10 +42,11 @@ while TRUE
   FileUtils.rm RRD_FILE rescue nil
   FileUtils.rm XML_FILE+".new" rescue nil
   
-  GC.start
   memory_usage = `ps -o rss= -p #{Process.pid}`.to_i
   initial_memory ||= memory_usage
-  puts "##{i} Mem: #{memory_usage-initial_memory} from #{initial_memory}"
+  top_memory ||= memory_usage
+  top_memory = memory_usage > top_memory ? memory_usage : top_memory
+  puts "##{i} Mem: #{memory_usage-initial_memory} from #{initial_memory}; top: #{top_memory}"
   i += 1
 end
   

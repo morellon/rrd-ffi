@@ -144,6 +144,7 @@ module RRD
       
       # Create a graph from data stored in one or several RRDs.
       def graph(*args)
+        warn('Your RRDTool version contains a memory leak on rrd_graph function. Please, use carefully!') if ('1.3' <= rrd_strversion && rrd_strversion <= '1.4.2')
         argv = to_pointer(["graph"] + args)
         calcpr_ptr = empty_pointer
         xsize_ptr = empty_pointer
@@ -153,7 +154,15 @@ module RRD
         result = rrd_graph(args.size+1, argv, calcpr_ptr, xsize_ptr, ysize_ptr, nil, ymin_ptr, ymax_ptr) == 0
         
         # TODO: free array of pointers from calcpr_ptr
-        free_in_rrd(calcpr_ptr.read_pointer)
+        if (calcpr_ptr.read_pointer.address != 0)
+          i = 0
+          while calcpr_ptr.read_pointer[i].read_pointer.address != 0
+            free_in_rrd(calcpr_ptr.read_pointer[i].read_pointer)
+            i += 1
+          end
+          
+          free_in_rrd(calcpr_ptr.read_pointer)
+        end
         
         result
       ensure

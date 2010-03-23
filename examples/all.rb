@@ -24,12 +24,12 @@ while TRUE
      
   RRD::Wrapper.tune!(RRD_FILE, "--minimum", "memory:5") # OK
     
-  new_rrd = RRD::Base.new(RRD_FILE+".new")
-  new_rrd.create! :start => Time.now - 10.seconds, :step => 5.minutes do
-    datasource "memory", :type => :gauge, :heartbeat => 10.minutes, :min => 0, :max => :unlimited
-    archive :average, :every => 10.minutes, :during => 1.year
-  end # OK
-  new_rrd.dump!(XML_FILE+".new") # OK
+  # new_rrd = RRD::Base.new(RRD_FILE+".new")
+  # new_rrd.create! :start => Time.now - 10.seconds, :step => 5.minutes do
+  #   datasource "memory", :type => :gauge, :heartbeat => 10.minutes, :min => 0, :max => :unlimited
+  #   archive :average, :every => 10.minutes, :during => 1.year
+  # end # OK
+  # new_rrd.dump!(XML_FILE+".new") # OK
    
   ############################################
   # RRD.graph! IMG_FILE, :title => "Test", :width => 800, :height => 250 do
@@ -41,7 +41,7 @@ while TRUE
   FileUtils.rm RESIZE_FILE rescue nil
   FileUtils.rm RRD_FILE rescue nil
   FileUtils.rm XML_FILE+".new" rescue nil
-  
+  GC.start
   memory_usage = `ps -o rss= -p #{Process.pid}`.to_i
   initial_memory ||= memory_usage
   top_memory ||= memory_usage

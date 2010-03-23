@@ -9,9 +9,9 @@
 * TODO: Add memory leak test
 * TODO: Add tune methods to RRD::Base instance
 
-== 2010-03-08 version 0.2.2
+== 2010-03-23 version 0.2.2
 
-* Fixed memory leak on RRD::Wrapper (info, graph, last_update, fetch)
+* Fixed memory leak on RRD::Wrapper (info, graph, last_update, fetch): works on librrd 1.4.2
 * Added graph! to RRD
 * Added bang methods to base
 * Added dump, last_update, resize methods to RRD::Base instance

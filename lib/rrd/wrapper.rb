@@ -54,7 +54,7 @@ module RRD
       begin
         attach_function :rrd_lastupdate_r, [:string, :pointer, :pointer, :pointer, :pointer], :int
       rescue Exception => e
-        puts "Please upgrade your rrdtool version to use last_update method"
+        warn "Please upgrade your rrdtool version to use last_update method"
       end
         
       attach_function :rrd_resize, [:int, :pointer], :int
@@ -231,7 +231,7 @@ module RRD
 
         [["time"] + ds_names, [update_time]+values]
       ensure
-        free_pointers
+        # free_pointers
       end
       
       # Used to modify the number of rows in an RRA
@@ -291,10 +291,12 @@ module RRD
 
       # Defining all bang methods
       BANG_METHODS.each do |bang_method|
-        define_method(bang_method) do |*args, &block|
-          method = bang_method.to_s.match(/^(.+)!$/)[1]
-          bang(method, *args, &block)
-        end
+        class_eval "
+          def #{bang_method}(*args, &block)
+            method = \"#{bang_method}\".match(/^(.+)!$/)[1]
+            bang(method, *args, &block)
+          end
+        "
       end
    
       private

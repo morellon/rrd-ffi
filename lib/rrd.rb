@@ -44,10 +44,12 @@ module RRD
 
   # Defining all bang methods
   BANG_METHODS.each do |bang_method|
-    define_method(bang_method) do |*args, &block|
-      method = bang_method.to_s.match(/^(.+)!$/)[1]
-      bang(method, *args, &block)
-    end
+    class_eval "
+      def #{bang_method}(*args, &block)
+        method = \"#{bang_method}\".match(/^(.+)!$/)[1]
+        bang(method, *args, &block)
+      end
+    "
   end
 end
 

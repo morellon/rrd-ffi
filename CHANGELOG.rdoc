@@ -8,7 +8,9 @@
 * TODO: add more rrd functions (xport). Any other missing?
 * TODO: Add memory leak test
 * TODO: Add tune methods to RRD::Base instance
-* Fixed Bang methods to work with jruby
+
+== 2010-05-18 version 0.2.3
+* Fixed Bang methods to work with jruby, ruby 1.8.6, ruby 1.9.1
 
 == 2010-03-23 version 0.2.2
 

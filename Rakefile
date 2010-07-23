@@ -22,6 +22,7 @@ begin
     gem.authors = ["morellon", "fnando", "rafaelrosafu", "dalcico"]
     gem.add_development_dependency "rspec"
     gem.add_dependency "ffi"
+    gem.add_dependency "activesupport"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError

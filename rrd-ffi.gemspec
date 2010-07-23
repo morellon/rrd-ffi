@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rrd-ffi}
-  s.version = "0.2.3"
+  s.version = "0.2.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["morellon", "fnando", "rafaelrosafu", "dalcico"]
-  s.date = %q{2010-05-18}
+  s.date = %q{2010-07-23}
   s.description = %q{Provides bindings for many RRD functions (using ffi gem and librrd), as well as DSLs for graphic and rrd building. You must have librrd in your system!}
   s.email = %q{morellon@gmail.com}
   s.extra_rdoc_files = [
@@ -24,8 +24,8 @@ Gem::Specification.new do |s|
      "lib/rrd.rb",
      "lib/rrd/base.rb",
      "lib/rrd/builder.rb",
-     "lib/rrd/ext/fixnum.rb",
      "lib/rrd/graph.rb",
+     "lib/rrd/time_extension.rb",
      "lib/rrd/version.rb",
      "lib/rrd/wrapper.rb",
      "rrd-ffi.gemspec",
@@ -40,14 +40,14 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/morellon/rrd-ffi}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.5}
+  s.rubygems_version = %q{1.3.7}
   s.summary = %q{RRDTool gem using librrd and ffi}
   s.test_files = [
-    "spec/rrd/base_spec.rb",
+    "spec/rrd_spec.rb",
+     "spec/rrd/base_spec.rb",
      "spec/rrd/builder_spec.rb",
      "spec/rrd/graph_spec.rb",
      "spec/rrd/wrapper_spec.rb",
-     "spec/rrd_spec.rb",
      "spec/spec_helper.rb",
      "examples/all.rb"
   ]
@@ -56,16 +56,19 @@ Gem::Specification.new do |s|
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
-    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<rspec>, [">= 0"])
       s.add_runtime_dependency(%q<ffi>, [">= 0"])
+      s.add_runtime_dependency(%q<activesupport>, [">= 0"])
     else
       s.add_dependency(%q<rspec>, [">= 0"])
       s.add_dependency(%q<ffi>, [">= 0"])
+      s.add_dependency(%q<activesupport>, [">= 0"])
     end
   else
     s.add_dependency(%q<rspec>, [">= 0"])
     s.add_dependency(%q<ffi>, [">= 0"])
+    s.add_dependency(%q<activesupport>, [">= 0"])
   end
 end
 

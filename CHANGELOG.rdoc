@@ -9,6 +9,9 @@
 * TODO: Add memory leak test
 * TODO: Add tune methods to RRD::Base instance
 
+== 2010-07-23 version 0.2.4
+* Added ActiveSupport to extend Fixnum and Integer time helpers
+
 == 2010-05-18 version 0.2.3
 * Fixed Bang methods to work with jruby, ruby 1.8.6, ruby 1.9.1
 

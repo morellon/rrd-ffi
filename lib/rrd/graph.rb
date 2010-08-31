@@ -91,8 +91,13 @@ module RRD
     
     private
     def draw(type, options)
-      options[:label] = options[:label].gsub(/^:/, "\\:").gsub(/([^\\]):/, "\\1\\:") # Escape all non-escaped ':'
-      printable = "#{type}:#{options[:data]}#{options[:color]}:#{options[:label]}"
+      printable = "#{type}:#{options[:data]}#{options[:color]}"
+
+      if options[:label]
+        options[:label] = options[:label].gsub(/^:/, "\\:").gsub(/([^\\]):/, "\\1\\:") # Escape all non-escaped ':'
+        printable += ":#{options[:label]}"
+      end
+
       printables << printable
       printable
     end

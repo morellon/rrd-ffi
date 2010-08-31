@@ -80,16 +80,18 @@ module RRD
       [definition, printable]
     end
     
-    def save
+    def save    
+      Wrapper.graph(*generate_args)
+    end
+    
+    private
+    def generate_args
       args = [output]
       args += RRD.to_line_parameters(parameters, GRAPH_FLAGS)
       args += definitions
       args += printables
-      
-      Wrapper.graph(*args)
     end
     
-    private
     def draw(type, options)
       printable = "#{type}:#{options[:data]}#{options[:color]}"
 

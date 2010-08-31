@@ -19,7 +19,7 @@ begin
     gem.description = %Q{Provides bindings for many RRD functions (using ffi gem and librrd), as well as DSLs for graphic and rrd building. You must have librrd in your system!}
     gem.email = "morellon@gmail.com"
     gem.homepage = "http://github.com/morellon/rrd-ffi"
-    gem.authors = ["morellon", "fnando", "rafaelrosafu", "dalcico"]
+    gem.authors = ["morellon"]
     gem.add_development_dependency "rspec"
     gem.add_dependency "ffi"
     gem.add_dependency "activesupport"

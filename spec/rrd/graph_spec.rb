@@ -28,6 +28,11 @@ describe RRD::Graph do
     result.should == "LINE1:mem#0000FF:Memory"
   end
   
+  it "should store printable for line drawing withou label" do
+    result = @graph.draw_line :data => "mem", :color => "#0000FF", :width => 1
+    result.should == "LINE1:mem#0000FF"
+  end
+  
   it "should store printable for area drawing" do
     result = @graph.draw_area :data => "cpu", :color => "#00FF00", :label => "CPU 0"
     result.should == "AREA:cpu#00FF00:CPU 0"
@@ -62,19 +67,22 @@ describe RRD::Graph do
   end
   
   it "should create a graph correctly" do
+    expected_args = [IMG_FILE,
+                    "--full-size-mode",
+                    "--color", "FONT#000000",
+                    "--color", "BACK#FFFFFF",
+                    "--title", "Title",
+                    "--start", #starting_time,
+                    "--height", "200",
+                    "--end", #ending_time,
+                    "--width", "800",
+                    "DEF:memory_average=#{RRD_FILE}:memory:AVERAGE",
+                    "LINE1:memory_average#0000FF:Memory\\: Avg"]
     @graph.line RRD_FILE, :memory => :average, :color => "#0000FF", :label => "Memory: Avg"
-    RRD::Wrapper.should_receive(:graph).with(IMG_FILE,
-                                            "--full-size-mode",
-                                            "--color", "FONT#000000",
-                                            "--color", "BACK#FFFFFF",
-                                            "--title", "Title",
-                                            "--start", anything(),
-                                            "--height", "200",
-                                            "--end", anything(),
-                                            "--width", "800",
-                                            "DEF:memory_average=#{RRD_FILE}:memory:AVERAGE",
-                                            "LINE1:memory_average#0000FF:Memory\\: Avg").and_return true
-    @graph.save
+    generated_args = @graph.send(:generate_args)
+    generated_args.size.should == expected_args.size + 2
+    generated_args.first.should == expected_args.first
+    (expected_args - generated_args).should be_empty
   end
 
   

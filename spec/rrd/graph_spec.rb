@@ -4,7 +4,8 @@ describe RRD::Graph do
     
   before do
     RRD::Base.new(RRD_FILE).restore(XML_FILE)
-    @graph = RRD::Graph.new IMG_FILE, :title => "Title", :width => 800, :height => 200, :full_size_mode => true
+    @graph = RRD::Graph.new IMG_FILE, :title => "Title", :width => 800, :height => 200, :full_size_mode => true,
+                            :color => ["FONT#000000", "BACK#FFFFFF"]
   end
   
   it "should store definition for rrd data" do
@@ -47,6 +48,12 @@ describe RRD::Graph do
     result[0].should == "DEF:memory_average=#{RRD_FILE}:memory:AVERAGE"
     result[1].should == "LINE1:memory_average#0000FF:Memory\\: Avg"
   end
+
+  it "should store definition and printable for line (without label)" do
+    result = @graph.line RRD_FILE, :memory => :average, :color => "#0000FF"
+    result[0].should == "DEF:memory_average=#{RRD_FILE}:memory:AVERAGE"
+    result[1].should == "LINE1:memory_average#0000FF"
+  end
   
   it "should store definition and printable for area" do
     result = @graph.area RRD_FILE, :memory => :average, :color => "#0000FF", :label => "Memory: Avg"
@@ -58,14 +65,17 @@ describe RRD::Graph do
     @graph.line RRD_FILE, :memory => :average, :color => "#0000FF", :label => "Memory: Avg"
     RRD::Wrapper.should_receive(:graph).with(IMG_FILE,
                                             "--full-size-mode",
-                                            "--end", anything(),
-                                            "--height", "200",
-                                            "--start", anything(),
+                                            "--color", "FONT#000000",
+                                            "--color", "BACK#FFFFFF",
                                             "--title", "Title",
+                                            "--start", anything(),
+                                            "--height", "200",
+                                            "--end", anything(),
                                             "--width", "800",
                                             "DEF:memory_average=#{RRD_FILE}:memory:AVERAGE",
                                             "LINE1:memory_average#0000FF:Memory\\: Avg").and_return true
     @graph.save
   end
+
   
 end

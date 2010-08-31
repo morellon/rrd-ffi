@@ -9,6 +9,11 @@
 * TODO: Add memory leak test
 * TODO: Add tune methods to RRD::Base instance
 
+== 2010-08-31 version 0.2.5
+
+* Added support for repeated parameters like --color BACK#FFFFFF --color FONT#000000
+* Fixed draw lines and areas without :label param
+
 == 2010-07-23 version 0.2.4
 * Added ActiveSupport to extend Fixnum and Integer time helpers
 

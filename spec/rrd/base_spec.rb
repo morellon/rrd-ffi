@@ -40,7 +40,7 @@ describe RRD::Base do
   it "should fetch data from rrd file" do
     start_time = Time.now - 3600
     end_time = Time.now
-    raw_params = ["AVERAGE", "--end", "#{end_time.to_i}", "--resolution", "1", "--start", "#{start_time.to_i}"]
+    raw_params = ["AVERAGE", "--start", "#{start_time.to_i}", "--end", "#{end_time.to_i}", "--resolution", "1" ]
     RRD::Wrapper.should_receive(:fetch).with(RRD_FILE, *raw_params).and_return([])
     @rrd.fetch(:average, :start => start_time, :end => end_time, :resolution => 1.second)
   end

@@ -1,4 +1,4 @@
-= Introduction 
+= Introduction
 
 rrd-ffi is a gem for using rrd actions in your ruby code.
 
@@ -83,8 +83,9 @@ From source:
   end
   
   # Generating a graph with memory and cpu usage from myrrd.rrd file
-  RRD.graph "graph.png", :title => "Test", :width => 800, :height => 250 do
+  RRD.graph "graph.png", :title => "Test", :width => 800, :height => 250, :color => ["FONT#000000", "BACK#FFFFFF"] do
     area "myrrd.rrd", :cpu0 => :average, :color => "#00FF00", :label => "CPU 0"
+    line "myrrd.rrd", :cpu0 => :average, :color => "#007f3f"
     line "myrrd.rrd", :memory => :average, :color => "#0000FF", :label => "Memory"
   end
 

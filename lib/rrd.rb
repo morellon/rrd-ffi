@@ -28,12 +28,16 @@ module RRD
     end
 
     line_params = []
-    hash.each_pair { |key,value| line_params += ["--#{key}".gsub(/_/, "-"), value.to_s] }
-    line_params = Hash[*line_params]
 
-    params = []
-    line_params.keys.sort.each { |key| params += [key, line_params[key]] }
-    used_flags + params
+    hash.each_pair do |key,value|
+      if value.kind_of? Array
+        value.each {|v| line_params += ["--#{key}".gsub(/_/, "-"), v.to_s]}
+      else
+        line_params += ["--#{key}".gsub(/_/, "-"), value.to_s]
+      end
+    end
+
+    used_flags + line_params
   end
 
   def methods

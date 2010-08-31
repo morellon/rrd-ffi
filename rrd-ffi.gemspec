@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rrd-ffi}
-  s.version = "0.2.4"
+  s.version = "0.2.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["morellon", "fnando", "rafaelrosafu", "dalcico"]
-  s.date = %q{2010-07-23}
+  s.authors = ["morellon"]
+  s.date = %q{2010-08-31}
   s.description = %q{Provides bindings for many RRD functions (using ffi gem and librrd), as well as DSLs for graphic and rrd building. You must have librrd in your system!}
   s.email = %q{morellon@gmail.com}
   s.extra_rdoc_files = [
@@ -43,11 +43,11 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{RRDTool gem using librrd and ffi}
   s.test_files = [
-    "spec/rrd_spec.rb",
-     "spec/rrd/base_spec.rb",
+    "spec/rrd/base_spec.rb",
      "spec/rrd/builder_spec.rb",
      "spec/rrd/graph_spec.rb",
      "spec/rrd/wrapper_spec.rb",
+     "spec/rrd_spec.rb",
      "spec/spec_helper.rb",
      "examples/all.rb"
   ]

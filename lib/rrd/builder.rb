@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 module RRD
   class Builder
     attr_accessor :output, :parameters, :datasources, :archives

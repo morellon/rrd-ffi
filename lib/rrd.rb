@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 require "ffi"
 require "rrd/version"
 require "rrd/wrapper"

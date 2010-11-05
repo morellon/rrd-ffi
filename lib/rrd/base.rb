@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 module RRD
   # TODO: add bang methods
   class Base

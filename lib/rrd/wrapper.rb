@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 module RRD
   # Raw RRD Tool wrapper.
   #

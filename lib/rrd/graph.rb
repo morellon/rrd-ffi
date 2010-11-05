@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 module RRD
   class Graph
     GRAPH_OPTIONS = [:color, :label]

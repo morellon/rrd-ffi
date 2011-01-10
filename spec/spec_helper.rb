@@ -1,5 +1,5 @@
 require "rubygems"
-require "spec"
+require "rspec"
 $LOAD_PATH.unshift File.dirname(__FILE__) + "/../lib"
 require "rrd"
 
@@ -9,8 +9,8 @@ IMG_FILE = File.expand_path(File.dirname(__FILE__) + "/vm.png")
 XML_FILE = File.expand_path(File.dirname(__FILE__) + "/vm.xml")
 $VERBOSE = false
 
-Spec::Runner.configure do |config|
-  config.append_before :each do
+RSpec::Runner.configure do |config|
+  config.before :each do
     [RRD_FILE, IMG_FILE].each{|file| FileUtils.rm file rescue nil}
   end
   

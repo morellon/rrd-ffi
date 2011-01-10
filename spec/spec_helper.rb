@@ -11,7 +11,7 @@ $VERBOSE = false
 
 RSpec::Runner.configure do |config|
   config.before :each do
-    [RRD_FILE, IMG_FILE].each{|file| FileUtils.rm file rescue nil}
+    [RRD_FILE, IMG_FILE].each{|file| `rm #{file} 2>&1`}
   end
   
 end

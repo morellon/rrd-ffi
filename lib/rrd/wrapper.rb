@@ -57,6 +57,12 @@ module RRD
       rescue Exception => e
         warn "Please upgrade your rrdtool version to use last_update method"
       end
+      
+      begin
+        attach_function :rrd_xport, [:int, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer], :int
+      rescue Exception => e
+        warn "Please upgrade your rrdtool version to use xport method"
+      end
         
       attach_function :rrd_resize, [:int, :pointer], :int
       attach_function :rrd_restore, [:int, :pointer], :int
@@ -127,6 +133,65 @@ module RRD
         free_in_rrd(values_ptr.read_pointer, ds_names_ptr.read_pointer)
         
         result
+      ensure
+        free_pointers
+      end
+      
+      
+      # int rrd_xport(
+      #     int argc,
+      #     char **argv,
+      #     int UNUSED(*xsize),
+      #     time_t *start,
+      #     time_t *end,        /* which time frame do you want ?
+      #                          * will be changed to represent reality */
+      #     unsigned long *step,    /* which stepsize do you want? 
+      #                              * will be changed to represent reality */
+      #     unsigned long *col_cnt, /* number of data columns in the result */
+      #     char ***legend_v,   /* legend entries */
+      #     rrd_value_t **data)
+      def xport(*args)
+        start_time_ptr = empty_pointer
+        end_time_ptr = empty_pointer
+        step_ptr = empty_pointer
+        legend_count_ptr = empty_pointer
+        legend_names_ptr = empty_pointer
+        values_ptr = empty_pointer
+        
+        i_am_useless = empty_pointer
+        
+        
+        argv = to_pointer(["xport"] + args)
+        ret = rrd_xport(args.size+1, argv,
+          i_am_useless, start_time_ptr, end_time_ptr, step_ptr,
+          legend_count_ptr, legend_names_ptr, values_ptr)
+        
+        return false unless ret == 0
+        
+        
+        legends_count = legend_count_ptr.get_int(0)
+        start_time = start_time_ptr.get_int(0)
+        end_time = end_time_ptr.get_int(0)
+        step = step_ptr.get_int(0)
+        
+        result_lines = (end_time-start_time)/step
+        
+        legends = legend_names_ptr.get_pointer(0).get_array_of_string(0, legends_count)
+        values = values_ptr.get_pointer(0).get_array_of_double(0, result_lines * legends_count)
+        
+        result = [["time"] + legends]
+        (0..result_lines-1).each do |line|
+          date = start_time + line*step
+          first = legends_count*line
+          last = legends_count*line + legends_count - 1
+          result << [date] + values[first..last]
+        end
+        
+        free_in_rrd(*legend_names_ptr.read_pointer.read_array_of_pointer(legends_count))
+        free_in_rrd(values_ptr.read_pointer, legend_names_ptr.read_pointer)
+        
+        result
+        
       ensure
         free_pointers
       end

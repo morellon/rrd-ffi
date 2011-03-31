@@ -1,9 +1,6 @@
 require "spec_helper"
 
 describe RRD::Wrapper do
-  
-  NaN = 0/0.0
-  
   context "when looking for librrd path" do
     before :each do
       Object.send(:remove_const, :RRD_LIB) if defined?(::RRD_LIB) 
@@ -58,8 +55,7 @@ describe RRD::Wrapper do
     
     it 'should xport values' do
       values = RRD::Wrapper.xport("--start", "1266933600", "--end", "1266944400", "DEF:xx=#{RRD_FILE}:cpu0:AVERAGE", "XPORT:xx:Legend 0")
-      values.should == [["time", "Legend 0"], [1266933600, 0.0008], [1266937200, 0.0008], [1266940800, 0.0008], [1266944400, NaN]]
-      
+      values[0..-2].should == [["time", "Legend 0"], [1266933600, 0.0008], [1266937200, 0.0008], [1266940800, 0.0008]]
     end
     
     it "should return info data about this file" do

@@ -26,8 +26,9 @@ module RRD
     
     def archive(consolidation_function, options = {})
       options = {:every => 5.minutes, :during => 1.day}.merge options
-      archive_steps = options[:every]/parameters[:step]
-      archive_rows = options[:during]/options[:every]
+      # steps and rows must be integer, so we need to convert float values
+      archive_steps = (options[:every]/parameters[:step]).to_i
+      archive_rows = (options[:during]/options[:every]).to_i
       archive = "RRA:#{consolidation_function.to_s.upcase}:0.5:#{archive_steps}:#{archive_rows}"
       archives << archive
       archive

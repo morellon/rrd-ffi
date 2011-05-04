@@ -101,6 +101,10 @@ module RRD
         printable += ":#{options[:label]}"
       end
 
+      if options[:extra]
+        printable += ":#{options[:extra]}"
+      end
+
       printables << printable
       printable
     end

@@ -28,9 +28,14 @@ describe RRD::Graph do
     result.should == "LINE1:mem#0000FF:Memory"
   end
   
-  it "should store printable for line drawing withou label" do
+  it "should store printable for line drawing without label" do
     result = @graph.draw_line :data => "mem", :color => "#0000FF", :width => 1
     result.should == "LINE1:mem#0000FF"
+  end
+  
+  it "should store printable for line drawing with extra" do
+    result = @graph.draw_line :data => "mem", :color => "#0000FF", :label => "Memory", :width => 1, :extra => "dashes=15,10,10,15"
+    result.should == "LINE1:mem#0000FF:Memory:dashes=15,10,10,15"
   end
   
   it "should store printable for area drawing" do

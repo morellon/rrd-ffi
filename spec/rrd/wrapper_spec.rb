@@ -103,7 +103,7 @@ describe RRD::Wrapper do
     
     it "should return the error correctly, cleaning the error var" do
       RRD::Wrapper.error.should be_empty
-      RRD::Wrapper.fetch("error").should be_false
+      RRD::Wrapper.info("error").should be_false
       RRD::Wrapper.error.should_not be_empty
     end
   end

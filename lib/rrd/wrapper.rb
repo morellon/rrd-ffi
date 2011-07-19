@@ -46,7 +46,6 @@ module RRD
       
       attach_function :rrd_create, [:int, :pointer], :int
       attach_function :rrd_dump, [:int, :pointer], :int
-      attach_function :rrd_fetch, [:int, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer], :int
       attach_function :rrd_first, [:int, :pointer], :time_t
       attach_function :rrd_graph, [:int, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer], :int
       attach_function :rrd_info, [:int, :pointer], :pointer
@@ -56,6 +55,12 @@ module RRD
         attach_function :rrd_lastupdate_r, [:string, :pointer, :pointer, :pointer, :pointer], :int
       rescue Exception => e
         warn "Please upgrade your rrdtool version to use last_update method"
+      end
+      
+      begin
+        attach_function :rrd_fetch_r, [:string, :string, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer], :int
+      rescue
+        attach_function :rrd_fetch, [:int, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer], :int
       end
       
       begin
@@ -109,7 +114,19 @@ module RRD
         values_ptr = empty_pointer
         
         argv = to_pointer(["fetch"] + args)
-        return false unless rrd_fetch(args.size+1, argv, start_time_ptr, end_time_ptr, step_ptr, ds_count_ptr, ds_names_ptr, values_ptr) == 0
+        if respond_to?(:rrd_fetch_r)
+          file = args[0]
+          cf = args[1]
+          options = {}
+          args[2..-1].each_slice(2) {|v| options[v.first] = v.last}
+          start_time = options["--start"]
+          end_time = options["--end"]
+          start_time_ptr.put_int(0, start_time.to_i)
+          end_time_ptr.put_int(0, end_time.to_i)
+          return false unless rrd_fetch_r(file, cf, start_time_ptr, end_time_ptr, step_ptr, ds_count_ptr, ds_names_ptr, values_ptr) == 0
+        else
+          return false unless rrd_fetch(args.size+1, argv, start_time_ptr, end_time_ptr, step_ptr, ds_count_ptr, ds_names_ptr, values_ptr) == 0
+        end
         
         ds_count = ds_count_ptr.get_int(0)
         start_time = start_time_ptr.get_int(0)

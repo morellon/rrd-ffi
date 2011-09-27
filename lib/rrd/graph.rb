@@ -54,7 +54,7 @@ module RRD
     end
     
     def shift(options)
-      definition = "SHIFT:#{options.keys.first}:#{options.values.first}"
+      definition = "SHIFT:#{options.keys.first}:#{options.values.first.to_i}"
       definitions << definition
       definition
     end

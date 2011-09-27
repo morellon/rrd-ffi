@@ -32,7 +32,8 @@ describe RRD::Graph do
   end
 
   it "should store definition for offset data" do
-    result = @graph.shift :cpu0 => Time.now - 2.day
+    result = @graph.shift :cpu0 => 1.day
+    result.should == "SHIFT:cpu0:#{1.day}"
   end
   
   it "should store printable for line drawing" do

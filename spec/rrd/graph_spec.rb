@@ -12,7 +12,15 @@ describe RRD::Graph do
     result = @graph.for_rrd_data "cpu0", :cpu0 => :average, :from => RRD_FILE
     result.should == "DEF:cpu0=#{RRD_FILE}:cpu0:AVERAGE"
   end
-  
+
+  it "should store definition for rrd data with extended options" do
+    start_at = Time.now - 2.day
+    end_at   = Time.now - 1.day
+    step     = 60
+    result = @graph.for_rrd_data "cpu0", :cpu0 => :average, :from => RRD_FILE, :start => start_at, :end => end_at, :step => step
+    result.should == "DEF:cpu0=#{RRD_FILE}:cpu0:AVERAGE:step=#{step}:start=#{start_at.to_i}:end=#{end_at.to_i}"
+  end
+
   it "should store definition for calculated data" do
     result = @graph.using_calculated_data "half_mem", :calc => "mem,2,/"
     result.should == "CDEF:half_mem=mem,2,/"
@@ -21,6 +29,11 @@ describe RRD::Graph do
   it "should store definition for static value" do
     result = @graph.using_value "mem_avg", :calc => "mem,AVERAGE"
     result.should == "VDEF:mem_avg=mem,AVERAGE"
+  end
+
+  it "should store definition for offset data" do
+    result = @graph.shift :cpu0 => 1.day
+    result.should == "SHIFT:cpu0:#{1.day}"
   end
   
   it "should store printable for line drawing" do

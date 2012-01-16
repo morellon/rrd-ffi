@@ -22,7 +22,15 @@ module RRD
     
     def for_rrd_data(data_name, options)
       dataset = options.reject {|name, value| DEF_OPTIONS.include?(name.to_sym)}
+      start_at = dataset[:start] && dataset.delete(:start)
+      end_at   = dataset[:end] && dataset.delete(:end)
+      step     = dataset[:step] && dataset.delete(:step)
+
       definition = "DEF:#{data_name}=#{options[:from]}:#{dataset.keys.first}:#{dataset.values.first.to_s.upcase}"
+      definition += ":step=#{step.to_i}" unless step.nil?
+      definition += ":start=#{start_at.to_i}" unless start_at.nil?
+      definition += ":end=#{end_at.to_i}" unless end_at.nil?
+
       definitions << definition
       definition
     end
@@ -45,12 +53,18 @@ module RRD
       printable
     end
     
+    def shift(options)
+      definition = "SHIFT:#{options.keys.first}:#{options.values.first.to_i}"
+      definitions << definition
+      definition
+    end
+
     def print_value(value_name, options)
       printable = "GPRINT:#{value_name}:#{options[:format]}"
       printables << printable
       printable
     end
-    
+
     def draw_line(options)
       options = {:width => 1}.merge options
       type = "LINE#{options[:width]}"
@@ -60,7 +74,7 @@ module RRD
     def draw_area(options)
       draw("AREA", options)
     end
-    
+
     def line(rrd_file, options)
       dataset = options.reject {|name, value| GRAPH_OPTIONS.include?(name.to_sym)}
       name = "#{dataset.keys.first}_#{dataset.values.first.to_s}"
@@ -80,7 +94,7 @@ module RRD
       printable = draw_area options
       [definition, printable]
     end
-    
+
     def save    
       Wrapper.graph(*generate_args)
     end

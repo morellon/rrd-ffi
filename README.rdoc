@@ -101,6 +101,16 @@ From source:
     print_value "mem_avg", :format => "%6.2lf %SB"
   end
 
+  # Generating a graph using shift
+  RRD.graph IMG_FILE, :title => "Test", :width => 800, :height => 250, :start => Time.now - 1.day, :end => Time.now do
+    for_rrd_data "mem", :memory => :average, :from => RRD_FILE
+    for_rrd_data "mem_yesterday", :memory => :average, :from => RRD_FILE, :start => Time.now - 2.day
+    draw_line :data => "mem", :color => "#0000FF", :label => "Memory", :width => 1
+    shift :mem_yesterday => 1.day
+    draw_line :data => "mem_yesterday", :color => "#0000FF", :label => "Yesterday memory", :width => 1
+  end
+
+
 == Raw API Usage
 
 Normal methods return false on error, or the expected result otherwise.

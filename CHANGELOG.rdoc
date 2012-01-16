@@ -9,6 +9,14 @@
 * TODO: Add memory leak test
 * TODO: Add tune methods to RRD::Base instance
 
+
+== 2010-08-31 version 0.2.8
+
+* Added: SHIFT options (Kamil Grabowski)
+* Added: start, end and step values to DEF definition (Kamil Grabowski)
+* Fixed gem to support activesupport ~> 3.1.0
+
+
 == 2010-08-31 version 0.2.5
 
 * Added support for repeated parameters like --color BACK#FFFFFF --color FONT#000000 (Kamil Grabowski)

@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "rrd-ffi"
-  s.version = "0.2.8"
+  s.version = "0.2.9"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["morellon"]
-  s.date = "2012-01-16"
+  s.date = "2012-03-23"
   s.description = "Provides bindings for many RRD functions (using ffi gem and librrd), as well as DSLs for graphic and rrd building. You must have librrd in your system!"
   s.email = "morellon@gmail.com"
   s.extra_rdoc_files = [

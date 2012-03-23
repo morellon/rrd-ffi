@@ -236,14 +236,12 @@ module RRD
         ymax_ptr = empty_pointer
         result = rrd_graph(args.size+1, argv, calcpr_ptr, xsize_ptr, ysize_ptr, nil, ymin_ptr, ymax_ptr) == 0
         
-        # TODO: free array of pointers from calcpr_ptr
-        if (calcpr_ptr.read_pointer.address != 0)
-          i = 0
-          while calcpr_ptr.read_pointer[i].read_pointer.address != 0
-            free_in_rrd(calcpr_ptr.read_pointer[i].read_pointer)
-            i += 1
+        if (!calcpr_ptr.read_pointer.null?)
+          iter = calcpr_ptr.read_pointer
+          until ((pointer = iter.read_pointer).null?)
+            iter += FFI::Type::POINTER.size
+            free_in_rrd(pointer)
           end
-          
           free_in_rrd(calcpr_ptr.read_pointer)
         end
         

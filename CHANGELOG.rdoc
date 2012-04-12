@@ -9,6 +9,9 @@
 * TODO: Add memory leak test
 * TODO: Add tune methods to RRD::Base instance
 
+== 2011-04-11 version 0.2.10
+
+* Fixes Segmentation Fault when using in a multi-thread environment
 
 == 2010-08-31 version 0.2.8
 

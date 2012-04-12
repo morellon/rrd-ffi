@@ -382,24 +382,24 @@ module RRD
    
       private
       def empty_pointer
-        @mem_ptrs ||= []
+        mem_ptrs ||= []
         ptr = FFI::MemoryPointer.new(:pointer)
-        @mem_ptrs << ptr
+        mem_ptrs << ptr
         ptr
       end
 
       # FIXME: remove clear_error from here
       def to_pointer(array_of_strings)
         clear_error
-        @strptrs = []
-        array_of_strings.each {|item| @strptrs << FFI::MemoryPointer.from_string(item)}
+        str_ptrs = []
+        array_of_strings.each {|item| str_ptrs << FFI::MemoryPointer.from_string(item)}
 
-        @argv = FFI::MemoryPointer.new(:pointer, @strptrs.length)
-        @strptrs.each_with_index do |p, i|
-          @argv[i].put_pointer(0,  p)
+        argv = FFI::MemoryPointer.new(:pointer, str_ptrs.length)
+        str_ptrs.each_with_index do |p, i|
+          argv[i].put_pointer(0,  p)
         end
 
-        @argv
+        argv
       end
       
       def free_in_rrd(*pointers)
@@ -407,17 +407,26 @@ module RRD
       end
       
       def free_pointers
-        @strptrs ||= []
-        @mem_ptrs ||= []
+        str_ptrs ||= []
+        mem_ptrs ||= []
         
-        @strptrs.each{|str_ptr| str_ptr.free}
-        @mem_ptrs.each{|mem_ptr| mem_ptr.free}
-        @argv.free unless @argv.nil?
+        str_ptrs.each{|str_ptr| str_ptr.free}
+        mem_ptrs.each{|mem_ptr| mem_ptr.free}
+        argv.free unless argv.nil?
         
-        @argv = nil
-        @str_ptrs = nil
-        @mem_ptrs = nil
+        argv = nil
+        str_ptrs = nil
+        mem_ptrs = nil
       end
+
+      [:str_ptrs, :mem_ptrs, :argv].each do |name|
+        define_method name do 
+          Thread.current[name]
+        end
+        define_method "#{name}=" do |value|
+          Thread.current[name] = value
+        end        
+      end     
       
     end
   end

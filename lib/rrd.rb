@@ -4,18 +4,25 @@ require "rrd/version"
 require "rrd/wrapper"
 require "rrd/base"
 require "rrd/graph"
+require "rrd/xport"
 require "rrd/builder"
 require "rrd/time_extension"
 
 module RRD
   extend self
 
-  BANG_METHODS = [:graph!]
+  BANG_METHODS = [:graph!, :xport!]
 
   def graph(image_file, options = {}, &block)
     graph = Graph.new(image_file, options)
     graph.instance_eval(&block)
     graph.save
+  end
+
+  def xport(options = {}, &block)
+    xport = Xport.new(options)
+    xport.instance_eval(&block)
+    xport.save
   end
 
   def error

@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["morellon@gmail.com"]
   gem.description   = %q{Provides bindings for many RRD functions (using ffi gem and librrd), as well as DSLs for graphic and rrd building. You must have librrd in your system!}
   gem.summary       = %q{DSL + Bindings for librrd using FFI}
-  gem.homepage      = ""
+  gem.homepage      = "http://github.com/morellon/rrd-ffi"
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

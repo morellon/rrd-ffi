@@ -1,4 +1,7 @@
 source "http://rubygems.org"
 gem "ffi"
 gem "activesupport"
-gem "rspec", :require => "spec"
+
+group :development do
+  gem "rspec", :require => "spec"
+end

@@ -1,3 +1,10 @@
+PATH
+  remote: .
+  specs:
+    rrd-ffi (0.2.11)
+      activesupport
+      ffi
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -21,6 +28,5 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activesupport
-  ffi
+  rrd-ffi!
   rspec

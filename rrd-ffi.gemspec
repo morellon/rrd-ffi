@@ -14,4 +14,8 @@ Gem::Specification.new do |gem|
   gem.name          = "rrd-ffi"
   gem.require_paths = ["lib"]
   gem.version       = RRD::Version::STRING
+  
+  gem.add_dependency "ffi"
+  gem.add_dependency "activesupport"
+  gem.add_development_dependency "rspec"
 end

@@ -24,8 +24,8 @@ describe RRD do
     
     result.should be_true
     File.should be_file(IMG_FILE)
-  end
-  
+  end  
+
   it "should list all bang methods" do
     (RRD.methods & RRD::BANG_METHODS).should == RRD::BANG_METHODS
   end
@@ -45,4 +45,47 @@ describe RRD do
     result.should be_true
     File.should be_file(IMG_FILE)
   end
+
+
+  it "should export data using xport dsl" do
+    rrd = RRD::Base.new(RRD_FILE)
+    data = RRD.xport :start => rrd.starts_at, :end => rrd.ends_at, :step => 2 do
+      for_rrd_data "memory", :memory => :average, :from => RRD_FILE
+      for_rrd_data "cpu0", :cpu0 => :average, :from => RRD_FILE
+      using_calculated_data "half_mem", :calc => "memory,2,/"
+      xport "memory", :label => "Memory: Average"
+      xport "cpu0", :label => "cpu0: Average"
+      xport "half_mem", :label => "Half Memory"    
+    end
+
+    expected_data = [
+      ["time", "Memory: Average", "cpu0: Average", "Half Memory"],
+      [1266944780, 536870912.0, 0.0002, 268435456.0],
+      [1266944785, 536870912.0, 0.0022, 268435456.0],
+      [1266944790, 536870912.0, 0.0022, 268435456.0],
+    ]
+
+    data[0,4].should == expected_data    
+  end  
+
+  it "should export data using xport!" do
+    rrd = RRD::Base.new(RRD_FILE)
+    data = RRD.xport! :start => rrd.starts_at, :end => rrd.ends_at, :step => 2 do
+      for_rrd_data "memory", :memory => :average, :from => RRD_FILE
+      for_rrd_data "cpu0", :cpu0 => :average, :from => RRD_FILE
+      using_calculated_data "half_mem", :calc => "memory,2,/"
+      xport "memory", :label => "Memory: Average"
+      xport "cpu0", :label => "cpu0: Average"
+      xport "half_mem", :label => "Half Memory"    
+    end
+
+    expected_data = [
+      ["time", "Memory: Average", "cpu0: Average", "Half Memory"],
+      [1266944780, 536870912.0, 0.0002, 268435456.0],
+      [1266944785, 536870912.0, 0.0022, 268435456.0],
+      [1266944790, 536870912.0, 0.0022, 268435456.0],
+    ]
+
+    data[0,4].should == expected_data    
+  end  
 end

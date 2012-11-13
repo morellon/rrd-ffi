@@ -9,6 +9,11 @@
 * TODO: Add memory leak test
 * TODO: Add tune methods to RRD::Base instance
 
+== 2012-11-13 version 0.2.13
+
+* Added RRD::Xport capabilities (neilljordan)
+* "--resolution" parameter forwarded to rrd fetch (fpellanda)
+
 == 2011-04-11 version 0.2.10
 
 * Fixes Segmentation Fault when using in a multi-thread environment

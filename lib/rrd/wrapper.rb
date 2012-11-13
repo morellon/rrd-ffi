@@ -121,8 +121,10 @@ module RRD
           args[2..-1].each_slice(2) {|v| options[v.first] = v.last}
           start_time = options["--start"]
           end_time = options["--end"]
+          step = options["--resolution"]
           start_time_ptr.put_int(0, start_time.to_i)
           end_time_ptr.put_int(0, end_time.to_i)
+          step_ptr.put_int(0, step.to_i)
           return false unless rrd_fetch_r(file, cf, start_time_ptr, end_time_ptr, step_ptr, ds_count_ptr, ds_names_ptr, values_ptr) == 0
         else
           return false unless rrd_fetch(args.size+1, argv, start_time_ptr, end_time_ptr, step_ptr, ds_count_ptr, ds_names_ptr, values_ptr) == 0

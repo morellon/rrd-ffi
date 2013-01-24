@@ -5,7 +5,7 @@ module RRD
     DEF_OPTIONS= [:from]
     GRAPH_FLAGS = [:only_graph, :full_size_mode, :rigid, :alt_autoscale, :no_gridfit,
              :alt_y_grid, :logarithmic, :no_legend, :force_rules_legend, :lazy,
-             :pango_markup, :slope_mode, :interlaced] 
+             :pango_markup, :slope_mode, :interlaced, :disable_rrdtool_tag]
     
     attr_accessor :output, :parameters, :definitions, :printables
     

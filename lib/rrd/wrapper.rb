@@ -136,18 +136,18 @@ module RRD
         step = step_ptr.get_int(0)
         
         result_lines = (end_time-start_time)/step
-        
+
         ds_names = ds_names_ptr.get_pointer(0).get_array_of_string(0, ds_count)
         values = values_ptr.get_pointer(0).get_array_of_double(0, result_lines * ds_count)
-        
+
         result = [["time"] + ds_names]
+        t = start_time
         (0..result_lines-1).each do |line|
-          date = start_time + line*step
-          first = ds_count*line
-          last = ds_count*line + ds_count - 1
-          result << [date] + values[first..last]
+          first = ds_count * line
+          result << [t] + values[first,ds_count]
+          t += step
         end
-        
+
         free_in_rrd(*ds_names_ptr.read_pointer.read_array_of_pointer(ds_count))
         free_in_rrd(values_ptr.read_pointer, ds_names_ptr.read_pointer)
         
@@ -199,13 +199,13 @@ module RRD
         values = values_ptr.get_pointer(0).get_array_of_double(0, result_lines * legends_count)
         
         result = [["time"] + legends]
+        t = start_time
         (0..result_lines-1).each do |line|
-          date = start_time + line*step
           first = legends_count*line
-          last = legends_count*line + legends_count - 1
-          result << [date] + values[first..last]
+          result << [t] + values[first,legends_count]
+          t += step
         end
-        
+
         free_in_rrd(*legend_names_ptr.read_pointer.read_array_of_pointer(legends_count))
         free_in_rrd(values_ptr.read_pointer, legend_names_ptr.read_pointer)
         

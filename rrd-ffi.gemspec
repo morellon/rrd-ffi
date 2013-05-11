@@ -15,7 +15,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = RRD::Version::STRING
   
-  gem.add_dependency "ffi"
-  gem.add_dependency "time_units"
+  gem.add_dependency "ffi",        '~> 1.8.1'
+  gem.add_dependency "time_units", '~> 0.2.0'
   gem.add_development_dependency "rspec"
 end

@@ -21,8 +21,8 @@ describe RRD::Builder do
     @builder.datasource "memory", :type => :gauge, :heartbeat => 10.minutes, :min => 0, :max => :unlimited
     @builder.archive :average, :every => 10.minutes, :during => 1.day
     RRD::Wrapper.should_receive(:create).with("file.rrd",
-                                              "--start", @start_time.to_i.to_s,
                                               "--step", "300",
+                                              "--start", @start_time.to_i.to_s,
                                               "DS:memory:GAUGE:600:0:U",
                                               "RRA:AVERAGE:0.5:2:144")
     @builder.save

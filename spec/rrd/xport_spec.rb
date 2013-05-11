@@ -26,13 +26,15 @@ describe RRD::Xport do
   end
   
   it "should export data correctly" do
+    path = File.expand_path('../..', __FILE__)
+    
     memory_ds_name = Digest::MD5.hexdigest("#{RRD_FILE}_memory_average")
     cpu_ds_name = Digest::MD5.hexdigest("#{RRD_FILE}_cpu0_average")
     expected_args = [
       "--start", @rrd.starts_at.to_i.to_s,
       "--end", @rrd.ends_at.to_i.to_s,    
       "--step", "2",  
-      "DEF:memory=/Users/neilljordan/Documents/rrd-ffi/spec/vm.rrd:memory:AVERAGE",
+      "DEF:memory=#{path}/vm.rrd:memory:AVERAGE",
       "DEF:cpu0=#{RRD_FILE}:cpu0:AVERAGE",      
       "CDEF:half_mem=memory,2,/",            
       "XPORT:memory:Memory\\: Average",

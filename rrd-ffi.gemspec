@@ -16,6 +16,6 @@ Gem::Specification.new do |gem|
   gem.version       = RRD::Version::STRING
   
   gem.add_dependency "ffi"
-  gem.add_dependency "activesupport"
+  gem.add_dependency "time_units"
   gem.add_development_dependency "rspec"
 end

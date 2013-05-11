@@ -6,7 +6,7 @@ require "rrd/base"
 require "rrd/graph"
 require "rrd/xport"
 require "rrd/builder"
-require "rrd/time_extension"
+require 'time_units'
 
 module RRD
   extend self

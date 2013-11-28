@@ -17,8 +17,9 @@ module RRD
     end
     
     def datasource(name, options = {})
-      options = {:type => :gauge, :heartbeat => 10.minutes, :min => 0, :max => :unlimited}.merge options
+      options = {:type => :gauge, :heartbeat => 10.minutes, :min => :unlimited, :max => :unlimited}.merge options
       options[:max] = "U" if options[:max] == :unlimited
+      options[:min] = "U" if options[:min] == :unlimited
       datasource = "DS:#{name}:#{options[:type].to_s.upcase}:#{options[:heartbeat]}:#{options[:min]}:#{options[:max]}"
       datasources << datasource
       datasource

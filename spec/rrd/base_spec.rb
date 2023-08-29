@@ -108,7 +108,7 @@ describe RRD::Base do
     end
 
     it "should list them" do
-      (@rrd.methods & RRD::Base::BANG_METHODS).should == RRD::Base::BANG_METHODS
+      (@rrd.methods.sort & RRD::Base::BANG_METHODS.sort).should == RRD::Base::BANG_METHODS.sort
     end
 
     it "should return the normal method result" do

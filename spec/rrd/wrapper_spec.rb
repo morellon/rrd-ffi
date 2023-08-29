@@ -55,7 +55,7 @@ describe RRD::Wrapper do
 
     it 'should xport values' do
       values = RRD::Wrapper.xport("--start", "1266933600", "--end", "1266944400", "DEF:xx=#{RRD_FILE}:cpu0:AVERAGE", "XPORT:xx:Legend 0")
-      values[0..-2].should == [["time", "Legend 0"], [1266933600, 0.0008], [1266937200, 0.0008], [1266940800, 0.0008]]
+      values.should == [["time", "Legend 0"], [1266933600, 0.0008], [1266937200, 0.0008], [1266940800, 0.0008]]
     end
 
     it "should return info data about this file" do
@@ -74,7 +74,7 @@ describe RRD::Wrapper do
     it "should return the last entered values" do
       pending unless RRD::Wrapper.respond_to?(:rrd_lastupdate_r)
       result = RRD::Wrapper.last_update(RRD_FILE)
-      result.should have(2).lines
+      expect(result.size).to eq(2)
       `rrdtool lastupdate spec/vm.rrd`.should include(result[1][0].to_s)
     end
 
@@ -124,7 +124,8 @@ describe RRD::Wrapper do
     end
 
     it "should list them" do
-      (RRD::Wrapper.methods & RRD::Wrapper::BANG_METHODS).should == RRD::Wrapper::BANG_METHODS
+      (RRD::Wrapper.methods.sort & RRD::Wrapper::BANG_METHODS.sort)
+        .should == RRD::Wrapper::BANG_METHODS
     end
 
     it "should return the normal method result" do

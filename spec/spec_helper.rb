@@ -9,7 +9,7 @@ IMG_FILE = File.expand_path(File.dirname(__FILE__) + "/vm.png")
 XML_FILE = File.expand_path(File.dirname(__FILE__) + "/vm.xml")
 $VERBOSE = false
 
-RSpec::Runner.configure do |config|
+RSpec.configure do |config|
   config.before :each do
     [RRD_FILE, IMG_FILE].each{|file| `rm #{file} 2>&1`}
   end

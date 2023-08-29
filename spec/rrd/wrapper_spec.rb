@@ -33,7 +33,7 @@ describe RRD::Wrapper do
       RRD::Wrapper.create(RRD_FILE,
                           "--step", "300",
                           "DS:ifOutOctets:COUNTER:1800:0:4294967295",
-                          "RRA:AVERAGE:0.5:1:2016").should be_true
+                          "RRA:AVERAGE:0.5:1:2016").should be_truthy
       File.should be_file(RRD_FILE)
     end
   end
@@ -45,7 +45,7 @@ describe RRD::Wrapper do
     end
 
     it "should update the rrd file" do
-      RRD::Wrapper.update(RRD_FILE, "N:500000000:U:U:U:U:U:U:U:U").should be_true
+      RRD::Wrapper.update(RRD_FILE, "N:500000000:U:U:U:U:U:U:U:U").should be_truthy
     end
 
     it "should fetch values" do
@@ -84,18 +84,18 @@ describe RRD::Wrapper do
     end
 
     it "should tune rrd" do
-      RRD::Wrapper.tune(RRD_FILE, "--minimum", "memory:5").should be_true
+      RRD::Wrapper.tune(RRD_FILE, "--minimum", "memory:5").should be_truthy
     end
 
     it "should resize rrd" do
-      RRD::Wrapper.resize(RRD_FILE, "0", "GROW", "10").should be_true
+      RRD::Wrapper.resize(RRD_FILE, "0", "GROW", "10").should be_truthy
     end
 
     it "should dump rrd binary to xml" do
       new_xml = XML_FILE+"new"
       FileUtils.rm new_xml rescue nil
 
-      RRD::Wrapper.dump(RRD_FILE, new_xml).should be_true
+      RRD::Wrapper.dump(RRD_FILE, new_xml).should be_truthy
       File.should be_file(new_xml)
 
       FileUtils.rm new_xml rescue nil
@@ -103,7 +103,7 @@ describe RRD::Wrapper do
 
     it "should return the error correctly, cleaning the error var" do
       RRD::Wrapper.error.should be_empty
-      RRD::Wrapper.info("error").should be_false
+      RRD::Wrapper.info("error").should be_falsey
       RRD::Wrapper.error.should_not be_empty
     end
   end
@@ -112,14 +112,14 @@ describe RRD::Wrapper do
 
     it "should respond to them" do
       RRD::Wrapper::BANG_METHODS.each do |method|
-        RRD::Wrapper.respond_to?(method).should be_true
+        RRD::Wrapper.respond_to?(method).should be_truthy
       end
     end
 
     it "should have the normal method" do
       RRD::Wrapper::BANG_METHODS.each do |bang_method|
         method = bang_method.to_s.match(/^(.+)!$/)[1]
-        RRD::Wrapper.respond_to?(method).should be_true
+        RRD::Wrapper.respond_to?(method).should be_truthy
       end
     end
 
@@ -128,7 +128,7 @@ describe RRD::Wrapper do
     end
 
     it "should return the normal method result" do
-      RRD::Wrapper.restore!(XML_FILE, RRD_FILE).should be_true
+      RRD::Wrapper.restore!(XML_FILE, RRD_FILE).should be_truthy
     end
 
     it "should raise error if the normal method is not bangable" do

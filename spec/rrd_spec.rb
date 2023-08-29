@@ -12,7 +12,7 @@ describe RRD do
       line RRD_FILE, :memory => :average, :color => "#0000FF", :label => "Memory"
     end
 
-    result.should be_true
+    result.should be_truthy
     File.should be_file(IMG_FILE)
   end
 
@@ -22,7 +22,7 @@ describe RRD do
       line RRD_FILE, :memory => :average, :color => "#0000FF", :label => "Memory"
     end
 
-    result.should be_true
+    result.should be_truthy
     File.should be_file(IMG_FILE)
   end
 

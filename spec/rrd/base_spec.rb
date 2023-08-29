@@ -34,7 +34,7 @@ describe RRD::Base do
     data = [20, 20.0, nil]
     update_data = "#{time.to_i}:20:20.0:U"
     RRD::Wrapper.should_receive(:update).with(RRD_FILE, update_data).and_return(true)
-    @rrd.update(time, *data).should be_true
+    @rrd.update(time, *data).should be_truthy
   end
 
   it "should fetch data from rrd file" do
@@ -53,7 +53,7 @@ describe RRD::Base do
 
   it "should restore a rrd from xml" do
     RRD::Wrapper.should_receive(:restore).with(XML_FILE, RRD_FILE, "--force-overwrite").and_return(true)
-    @rrd.restore(XML_FILE, :force_overwrite => true).should be_true
+    @rrd.restore(XML_FILE, :force_overwrite => true).should be_truthy
   end
 
   it "should resize a RRA from rrd file" do
@@ -70,7 +70,7 @@ describe RRD::Base do
   it "should dump the binary rrd to xml" do
     xml_file = "new_xml"
     RRD::Wrapper.should_receive(:dump).with(RRD_FILE, xml_file, "--no-header").and_return(true)
-    @rrd.dump(xml_file, :no_header => true).should be_true
+    @rrd.dump(xml_file, :no_header => true).should be_truthy
   end
 
   it "should return the starting date" do
@@ -85,7 +85,7 @@ describe RRD::Base do
 
   it "should return the error" do
     @rrd.error.should be_empty
-    @rrd.restore("unknown file").should be_false
+    @rrd.restore("unknown file").should be_falsey
     @rrd.error.should_not be_empty
   end
 
@@ -103,7 +103,7 @@ describe RRD::Base do
     it "should have the normal method" do
       RRD::Base::BANG_METHODS.each do |bang_method|
         method = bang_method.to_s.match(/^(.+)!$/)[1]
-        @rrd.respond_to?(method).should be_true
+        @rrd.respond_to?(method).should be_truthy
       end
     end
 

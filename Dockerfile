@@ -13,7 +13,8 @@ RUN \
   openssh-client \
   librrd-dev \
   libpq-dev \
-  postgresql-client && \
+  postgresql-client \
+  rrdtool && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
@@ -37,7 +38,6 @@ RUN bundle _1.16.5_ install
 
 COPY lib/ lib/
 RUN gem build rrd-ffi.gemspec
-
 COPY spec/ spec/
 
 CMD bundle exec rspec -c spec

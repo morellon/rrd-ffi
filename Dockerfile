@@ -1,4 +1,4 @@
-FROM registry.terreactive.ch/dockerhub/ruby:2.5.1
+FROM registry.terreactive.ch/dockerhub/ruby:2.7.6
 
 ARG no_proxy="gitlab.terreactive.ch,gitlab,dis.terreactive.ch,dis,localhost"
 ARG http_proxy="http://wsa.terreactive.ch:3128"
@@ -30,7 +30,7 @@ COPY ./Gemfile ./rrd-ffi.gemspec ./Rakefile ./VERSION ./
 RUN ruby -v
 RUN which ruby
 
-RUN gem install bundler --no-ri --no-rdoc -v 1.16.5
+RUN gem install bundler --no-doc -v 1.16.5
 RUN bundle --version
 
 RUN bundle config path gems

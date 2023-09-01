@@ -17,10 +17,10 @@ Gem::Specification.new do |gem|
   gem.version       = version
   gem.license       = 'MIT'
 
-  gem.add_dependency 'activesupport', '~> 5.2'
-  gem.add_dependency 'ffi', '~> 1.0'
+  gem.add_dependency 'activesupport', '~> 6.1'
+  gem.add_dependency 'ffi', '~> 1.15'
 
   ## development dependencies
 
-  gem.add_development_dependency 'rspec', '~> 2.10'
+  gem.add_development_dependency 'rspec', '~> 2.14'
 end

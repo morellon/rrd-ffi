@@ -61,7 +61,4 @@ describe RRD::Xport do
 
     expect(data[0,4]).to eq expected_data
   end
-
-  it "export via dsl" do
-  end
 end

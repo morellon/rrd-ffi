@@ -32,7 +32,7 @@ describe RRD::Xport do
       "--start", @rrd.starts_at.to_i.to_s,
       "--end", @rrd.ends_at.to_i.to_s,
       "--step", "2",
-      "DEF:memory=/usr/share/taclom/rrd-ffi/spec/vm.rrd:memory:AVERAGE",
+      "DEF:memory=#{Dir.pwd}/spec/vm.rrd:memory:AVERAGE",
       "DEF:cpu0=#{RRD_FILE}:cpu0:AVERAGE",
       "CDEF:half_mem=memory,2,/",
       "XPORT:memory:Memory\\: Average",

@@ -8,12 +8,12 @@ describe RRD::Graph do
                             :color => ["FONT#000000", "BACK#FFFFFF"]
   end
 
-  it "store definition for rrd data" do
+  it "stores definition for rrd data" do
     result = @graph.for_rrd_data "cpu0", :cpu0 => :average, :from => RRD_FILE
     expect(result).to eq "DEF:cpu0=#{RRD_FILE}:cpu0:AVERAGE"
   end
 
-  it "store definition for rrd data with extended options" do
+  it "stores definition for rrd data with extended options" do
     start_at = Time.now - 2.day
     end_at   = Time.now - 1.day
     step     = 60
@@ -21,70 +21,70 @@ describe RRD::Graph do
     expect(result).to eq "DEF:cpu0=#{RRD_FILE}:cpu0:AVERAGE:step=#{step}:start=#{start_at.to_i}:end=#{end_at.to_i}"
   end
 
-  it "store definition for calculated data" do
+  it "stores definition for calculated data" do
     result = @graph.using_calculated_data "half_mem", :calc => "mem,2,/"
     expect(result).to eq "CDEF:half_mem=mem,2,/"
   end
 
-  it "store definition for static value" do
+  it "stores definition for static value" do
     result = @graph.using_value "mem_avg", :calc => "mem,AVERAGE"
     expect(result).to eq "VDEF:mem_avg=mem,AVERAGE"
   end
 
-  it "store definition for offset data" do
+  it "stores definition for offset data" do
     result = @graph.shift :cpu0 => 1.day
     expect(result).to eq "SHIFT:cpu0:#{1.day}"
   end
 
-  it "store printable for line drawing" do
+  it "stores printable for line drawing" do
     result = @graph.draw_line :data => "mem", :color => "#0000FF", :label => "Memory", :width => 1
     expect(result).to eq "LINE1:mem#0000FF:Memory"
   end
 
-  it "store printable for line drawing without label" do
+  it "stores printable for line drawing without label" do
     result = @graph.draw_line :data => "mem", :color => "#0000FF", :width => 1
     expect(result).to eq "LINE1:mem#0000FF"
   end
 
-  it "store printable for line drawing with extra" do
+  it "stores printable for line drawing with extra" do
     result = @graph.draw_line :data => "mem", :color => "#0000FF", :label => "Memory", :width => 1, :extra => "dashes=15,10,10,15"
     expect(result).to eq "LINE1:mem#0000FF:Memory:dashes=15,10,10,15"
   end
 
-  it "store printable for area drawing" do
+  it "stores printable for area drawing" do
     result = @graph.draw_area :data => "cpu", :color => "#00FF00", :label => "CPU 0"
     expect(result).to eq "AREA:cpu#00FF00:CPU 0"
   end
 
-  it "store printable for comment" do
+  it "stores printable for comment" do
     result = @graph.print_comment "Lero lero"
     expect(result).to eq "COMMENT:Lero lero"
   end
 
-  it "store printable for static value" do
+  it "stores printable for static value" do
     result = @graph.print_value "mem_avg", :format => "%6.2lf %SB"
     expect(result).to eq "GPRINT:mem_avg:%6.2lf %SB"
   end
 
-  it "store definition and printable for line" do
+  it "stores definition and printable for line" do
     result = @graph.line RRD_FILE, :memory => :average, :color => "#0000FF", :label => "Memory: Avg"
     expect(result[0]).to eq "DEF:memory_average=#{RRD_FILE}:memory:AVERAGE"
     expect(result[1]).to eq "LINE1:memory_average#0000FF:Memory\\: Avg"
   end
 
-  it "store definition and printable for line (without label)" do
+  it "stores definition and printable for line (without label)" do
     result = @graph.line RRD_FILE, :memory => :average, :color => "#0000FF"
     expect(result[0]).to eq "DEF:memory_average=#{RRD_FILE}:memory:AVERAGE"
     expect(result[1]).to eq "LINE1:memory_average#0000FF"
   end
 
-  it "store definition and printable for area" do
+  it "stores definition and printable for area" do
     result = @graph.area RRD_FILE, :memory => :average, :color => "#0000FF", :label => "Memory: Avg"
     expect(result[0]).to eq "DEF:memory_average=#{RRD_FILE}:memory:AVERAGE"
     expect(result[1]).to eq "AREA:memory_average#0000FF:Memory\\: Avg"
   end
 
-  it "create a graph correctly" do
+  it "creates a graph correctly" do
     expected_args = [IMG_FILE,
                     "--full-size-mode",
                     "--color", "FONT#000000",

@@ -7,13 +7,13 @@ describe RRD::Wrapper do
       ENV["RRD_LIB"] = nil
     end
 
-    it "look on RRD_LIB constant first" do
+    it "looks on RRD_LIB constant first" do
       ::RRD_LIB = "first"
       ENV["RRD_LIB"] = "second"
       expect(RRD::Wrapper.detect_rrd_lib).to eq "first"
     end
 
-    it "look on ENV if RRD_LIB is not defined" do
+    it "looks on ENV if RRD_LIB is not defined" do
       ENV["RRD_LIB"] = "second"
       expect(RRD::Wrapper.detect_rrd_lib).to eq "second"
     end
@@ -24,12 +24,11 @@ describe RRD::Wrapper do
   end
 
   context "when no rrd file exists" do
-
-    it "restore a rrd from xml" do
+    it "restores a rrd from xml" do
       expect(RRD::Wrapper.restore(XML_FILE, RRD_FILE)).to be_truthy
     end
 
-    it "create a rrd" do
+    it "creates a rrd" do
       expect(RRD::Wrapper.create(RRD_FILE,
                           "--step", "300",
                           "DS:ifOutOctets:COUNTER:1800:0:4294967295",
@@ -44,54 +43,54 @@ describe RRD::Wrapper do
       RRD::Wrapper.restore(XML_FILE, RRD_FILE)
     end
 
-    it "update the rrd file" do
+    it "updates the rrd file" do
       expect(RRD::Wrapper.update(RRD_FILE, "N:500000000:U:U:U:U:U:U:U:U")).to be_truthy
     end
 
-    it "fetch values" do
+    it "fetches values" do
       values = RRD::Wrapper.fetch(RRD_FILE, "AVERAGE", "--start", "1266933600", "--end", "1267020000")
       expect(values.size).to eq `rrdtool fetch #{RRD_FILE} AVERAGE --start 1266933600 --end 1267020000 | wc -l`.to_i - 1
     end
 
-    it 'xport values' do
+    it 'xports values' do
       values = RRD::Wrapper.xport("--start", "1266933600", "--end", "1266944400", "DEF:xx=#{RRD_FILE}:cpu0:AVERAGE", "XPORT:xx:Legend 0")
       expect(values).to eq [["time", "Legend 0"], [1266933600, 0.0008], [1266937200, 0.0008], [1266940800, 0.0008]]
     end
 
-    it "return info data about this file" do
+    it "returns info data about this file" do
       info = RRD::Wrapper.info(RRD_FILE)
       expect(info["filename"]).to eq RRD_FILE
     end
 
-    it "return the first entered date" do
+    it "returns the first entered date" do
       expect(RRD::Wrapper.first(RRD_FILE)).to eq `rrdtool first #{RRD_FILE}`.chomp.to_i
     end
 
-    it "return the last entered date" do
+    it "returns the last entered date" do
       expect(RRD::Wrapper.last(RRD_FILE)).to eq `rrdtool last #{RRD_FILE}`.chomp.to_i
     end
 
-    it "return the last entered values" do
+    it "returns the last entered values" do
       pending unless RRD::Wrapper.respond_to?(:rrd_lastupdate_r)
       result = RRD::Wrapper.last_update(RRD_FILE)
       expect(result.size).to eq(2)
       expect(`rrdtool lastupdate spec/vm.rrd`).to include(result[1][0].to_s)
     end
 
-    it "create a graph correctly" do
+    it "creates a graph correctly" do
       RRD::Wrapper.graph(IMG_FILE, "--width", "1000", "--height", "300", "DEF:data=#{RRD_FILE}:memory:AVERAGE", "LINE1:data#0000FF:Memory Avg", "--full-size-mode")
       expect(File).to be_file(IMG_FILE)
     end
 
-    it "tune rrd" do
+    it "tunes rrd" do
       expect(RRD::Wrapper.tune(RRD_FILE, "--minimum", "memory:5")).to be_truthy
     end
 
-    it "resize rrd" do
+    it "resizes rrd" do
       expect(RRD::Wrapper.resize(RRD_FILE, "0", "GROW", "10")).to be_truthy
     end
 
-    it "dump rrd binary to xml" do
+    it "dumps rrd binary to xml" do
       new_xml = XML_FILE+"new"
       FileUtils.rm new_xml rescue nil
 
@@ -101,7 +100,7 @@ describe RRD::Wrapper do
       FileUtils.rm new_xml rescue nil
     end
 
-    it "return the error correctly, cleaning the error var" do
+    it "returns the error correctly, cleaning the error var" do
       expect(RRD::Wrapper.error).to be_empty
       expect(RRD::Wrapper.info("error")).to be_falsey
       expect(RRD::Wrapper.error).not_to be_empty
@@ -110,33 +109,33 @@ describe RRD::Wrapper do
 
   context "when using bang methods" do
 
-    it "respond to them" do
+    it "responds to them" do
       RRD::Wrapper::BANG_METHODS.each do |method|
         expect(RRD::Wrapper.respond_to?(method)).to be_truthy
       end
     end
 
-    it "have the normal method" do
+    it "has the normal method" do
       RRD::Wrapper::BANG_METHODS.each do |bang_method|
         method = bang_method.to_s.match(/^(.+)!$/)[1]
         expect(RRD::Wrapper.respond_to?(method)).to be_truthy
       end
     end
 
-    it "list them" do
+    it "lists them" do
       expect(RRD::Wrapper.methods.sort & RRD::Wrapper::BANG_METHODS.sort).to eq RRD::Wrapper::BANG_METHODS
     end
 
-    it "return the normal method result" do
+    it "returns the normal method result" do
       expect(RRD::Wrapper.restore!(XML_FILE, RRD_FILE)).to be_truthy
     end
 
-    it "raise error if the normal method is not bangable" do
+    it "raises error if the normal method is not bangable" do
       expect(RRD::Wrapper).not_to receive(:bang)
       expect { RRD::Wrapper.error! }.to raise_error(NoMethodError)
     end
 
-    it "raise error if the normal method result is false" do
+    it "raises error if the normal method result is false" do
       expect(RRD::Wrapper).to receive(:info).and_return(false)
       expect(RRD::Wrapper).to receive(:error).and_return("error message")
       expect { RRD::Wrapper.bang(:info) }.to raise_error("error message")

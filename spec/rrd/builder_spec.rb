@@ -7,17 +7,17 @@ describe RRD::Builder do
     @builder = RRD::Builder.new "file.rrd", :start => @start_time
   end
 
-  it "store a datasource" do
+  it "stores a datasource" do
     datasource = @builder.datasource "memory", :type => :gauge, :heartbeat => 10.minutes, :min => 0, :max => :unlimited
     expect(datasource).to eq "DS:memory:GAUGE:600:0:U"
   end
 
-  it "store an archive" do
+  it "stores an archive" do
     archive = @builder.archive :average, :every => 10.minutes, :during => 1.day
     expect(archive).to eq "RRA:AVERAGE:0.5:2:144"
   end
 
-  it "create rrd file" do
+  it "creates rrd file" do
     @builder.datasource "memory", :type => :gauge, :heartbeat => 10.minutes, :min => 0, :max => :unlimited
     @builder.archive :average, :every => 10.minutes, :during => 1.day
     expect(RRD::Wrapper).to receive(:create).with(

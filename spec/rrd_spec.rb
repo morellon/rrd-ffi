@@ -6,7 +6,7 @@ describe RRD do
     RRD::Base.new(RRD_FILE).restore(XML_FILE)
   end
 
-  it "create a graph using simple DSL" do
+  it "creates a graph using simple DSL" do
     result = RRD.graph IMG_FILE, :title => "Test", :width => 800, :height => 250 do
       area RRD_FILE, :cpu0 => :average, :color => "#00FF00", :label => "CPU: 0"
       line RRD_FILE, :memory => :average, :color => "#0000FF", :label => "Memory"
@@ -16,7 +16,7 @@ describe RRD do
     expect(File).to be_file(IMG_FILE)
   end
 
-  it "create a graph using graph!" do
+  it "creates a graph using graph!" do
     result = RRD.graph! IMG_FILE, :title => "Test", :width => 800, :height => 250 do
       area RRD_FILE, :cpu0 => :average, :color => "#00FF00", :label => "CPU: 0"
       line RRD_FILE, :memory => :average, :color => "#0000FF", :label => "Memory"
@@ -26,11 +26,11 @@ describe RRD do
     expect(File).to be_file(IMG_FILE)
   end
 
-  it "list all bang methods" do
+  it "lists all bang methods" do
     expect(RRD.methods & RRD::BANG_METHODS).to eq RRD::BANG_METHODS
   end
 
-  it "create a graph using advanced DSL" do
+  it "creates a graph using advanced DSL" do
     result = RRD.graph IMG_FILE, :title => "Test", :width => 800, :height => 250, :start => Time.now - 1.day, :end => Time.now do
       for_rrd_data "cpu0", :cpu0 => :average, :from => RRD_FILE
       for_rrd_data "mem", :memory => :average, :from => RRD_FILE #TODO: :start => Time.now - 1.day, :end => Time.now, :shift => 1.hour
@@ -46,7 +46,7 @@ describe RRD do
     expect(File).to be_file(IMG_FILE)
   end
 
-  it "export data using xport dsl" do
+  it "exports data using xport dsl" do
     rrd = RRD::Base.new(RRD_FILE)
     data = RRD.xport :start => rrd.starts_at, :end => rrd.ends_at, :step => 2 do
       for_rrd_data "memory", :memory => :average, :from => RRD_FILE
@@ -67,7 +67,7 @@ describe RRD do
     expect(data[0,4]).to eq expected_data
   end
 
-  it "export data using xport!" do
+  it "exports data using xport!" do
     rrd = RRD::Base.new(RRD_FILE)
     data = RRD.xport! :start => rrd.starts_at, :end => rrd.ends_at, :step => 2 do
       for_rrd_data "memory", :memory => :average, :from => RRD_FILE

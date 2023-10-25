@@ -10,22 +10,22 @@ describe RRD::Xport do
     @xport = RRD::Xport.new :start => @rrd.starts_at, :end => @rrd.ends_at, :step => 2
   end
 
-  it "store definition for rrd data" do
+  it "stores definition for rrd data" do
     result = @xport.for_rrd_data "cpu0", :cpu0 => :average, :from => RRD_FILE
     expect(result).to eq "DEF:cpu0=#{RRD_FILE}:cpu0:AVERAGE"
   end
 
-  it "store definition for calculated data" do
+  it "stores definition for calculated data" do
     result = @xport.using_calculated_data "half_mem", :calc => "mem,2,/"
     expect(result).to eq "CDEF:half_mem=mem,2,/"
   end
 
-  it "store printable for xport" do
+  it "stores printable for xport" do
     result = @xport.xport 'memory', :label => "Memory"
     expect(result[0]).to eq "XPORT:memory:Memory"
   end
 
-  it "export data correctly" do
+  it "exports data correctly" do
     memory_ds_name = Digest::MD5.hexdigest("#{RRD_FILE}_memory_average")
     cpu_ds_name = Digest::MD5.hexdigest("#{RRD_FILE}_cpu0_average")
     expected_args = [

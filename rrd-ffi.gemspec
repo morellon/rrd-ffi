@@ -17,7 +17,7 @@ Gem::Specification.new do |gem|
   gem.version       = version
   gem.license       = 'MIT'
 
-  gem.add_dependency 'activesupport', '~> 7.0.0'
+  gem.add_dependency 'activesupport', '~> 7.1.1'
   gem.add_dependency 'ffi', '~> 1.15'
 
   ## development dependencies
